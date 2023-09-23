@@ -8,10 +8,8 @@ Welcome to the Basic Python Projects repository! We have a list of beginner-frie
 
 Looking for a way to dive in? Here are some "Good First Issue" tasks that you can contribute to:
 
-1. **Task Title**
-   - **Description:** Briefly describe the task.
-   - **Difficulty:** Easy
-   - **Skills Required:** Basic Python
+1. **Tic-Tac-Toe** (https://github.com/kelork/Python_Project/tree/main/tictactoe)
+   
    
 
 2. **Task Title**
