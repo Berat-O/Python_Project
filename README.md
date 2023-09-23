@@ -12,16 +12,11 @@ Looking for a way to dive in? Here are some "Good First Issue" tasks that you ca
    
    
 
-2. **Task Title**
-   - **Description:** Briefly describe the task.
-   - **Difficulty:** Easy
-   - **Skills Required:** Basic Python, Basic HTML/CSS (if applicable)
+2. **Stock Analysis Python Script**
+   
    
 
-3. **Task Title**
-   - **Description:** Briefly describe the task.
-   - **Difficulty:** Easy
-   - **Skills Required:** Basic Python, Basic Database (if applicable)
+
    
 
 ## Getting Started
