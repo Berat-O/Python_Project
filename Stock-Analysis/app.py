@@ -1,7 +1,8 @@
 import requests
 import csv
 import yfinance as yf
-from tabulate import tabulate
+import pandas as pd
+import matplotlib.pyplot as plt
 
 stocks = []
 with open("stocks1.csv") as file:
@@ -21,5 +22,17 @@ for stock in stocks:
         continue
 
 
-print(tabulate(sorted(data), headers, tablefmt="grid"))
-print(f"{count} stocks founded")
+#printing the data using pandas
+df= pd.DataFrame(data, columns=['Rate', 'Symbol'])
+print(df)
+
+#plotting a bar-graph using matplotlib
+plt.bar(df['Symbol'], df['Rate'], color='skyblue')
+plt.xlabel('Symbol')
+plt.ylabel('Rate')
+plt.title('Stock Ratings')
+
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+
+plt.show()
