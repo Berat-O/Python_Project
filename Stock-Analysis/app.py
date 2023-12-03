@@ -3,6 +3,9 @@ import csv
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
+import sys
+
+args = sys.argv
 
 stocks = []
 with open("stocks1.csv") as file:
@@ -24,10 +27,17 @@ for stock in stocks:
 
 #printing the data using pandas
 df= pd.DataFrame(data, columns=['Rate', 'Symbol'])
-print(df)
+if len(args) > 1 and args[1] == 'sort':
+    sort_df=df.sort_values(by=['Rate'])
+    print(sort_df)
+else:
+    print(df)
 
 #plotting a bar-graph using matplotlib
-plt.bar(df['Symbol'], df['Rate'], color='skyblue')
+if len(args) > 1 and args[1] == 'sort':
+    plt.bar(sort_df['Symbol'], sort_df['Rate'], color='skyblue')
+else:
+    plt.bar(df['Symbol'], df['Rate'], color='skyblue')
 plt.xlabel('Symbol')
 plt.ylabel('Rate')
 plt.title('Stock Ratings')

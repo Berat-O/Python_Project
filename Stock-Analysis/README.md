@@ -11,7 +11,7 @@ To use this script, follow these steps:
 2. Install dependencies:
 
 3. Run the script:(app.py)
-
+   Sort option: python app.py sort
 
 ## File Structure
 
