@@ -5,10 +5,26 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 from multiprocessing import Pool
+import logging
+
+# Assign Log message
+logger = logging.getLogger(__name__)
+
+# Create handler
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.INFO)
+
+# Assign handler
+sf_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(sf_format)
+
+# Add handlers
+logger.addHandler(stream_handler)
 
 def load_stocks(filename):
     with open(filename, 'r') as file:
         reader = csv.reader(file)
+        logger.info('Files loaded')
         return [line[0] for line in reader]
 
 def fetch_stock_data(stock):
@@ -16,14 +32,14 @@ def fetch_stock_data(stock):
         ticker = yf.Ticker(stock)
         return [ticker.info.get("recommendationMean"), ticker.info.get("symbol")]
     except (KeyError, requests.exceptions.HTTPError):
-        print(f"Failed to load data for {stock}")
+        logger.error(f"Failed to load data for {stock}", exc_info=True)
         return None
 
 def display_data(data, sort=False):
     df = pd.DataFrame(data, columns=['Rate', 'Symbol'])
     if sort:
         df = df.dropna().sort_values(by=['Rate'])
-    print(df)
+    print(df.head())
     return df
 
 def plot_data(df):
@@ -42,17 +58,19 @@ def save_successful_symbols(filename, successful_symbols):
             writer = csv.writer(file)
             for symbol in successful_symbols:
                 writer.writerow([symbol])
-        print(f"Successful symbols saved to {new_filename}.")
+        logger.info(f"Successful symbols saved to {new_filename}.")
     except Exception as e:
-        print(f"An error occurred while saving successful symbols to {new_filename}: {e}")
+        logger.error(f"An error occurred while saving successful symbols to {new_filename}: {e}")
 
 def main():
+    logging.basicConfig(filename='myapp.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+    logger.info('Session started')
     filename = input("Enter the filename containing the list of stocks: ")
     if not filename.endswith('.csv'):
         filename += '.csv'
 
     sort_data = input("Sort data? (yes/no): ").lower() == 'yes'
-    successful_symbols = []
+    successful_symbols = [] 
 
     try:
         stocks = load_stocks(filename)
@@ -65,10 +83,12 @@ def main():
         df = display_data(data, sort=sort_data)
         plot_data(df)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}")
     finally:
         if successful_symbols:
             save_successful_symbols(filename, successful_symbols)
+
+    logger.info('Session stopped')
 
 if __name__ == "__main__":
     main()
