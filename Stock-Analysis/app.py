@@ -63,7 +63,11 @@ def save_successful_symbols(filename, successful_symbols):
         logger.error(f"An error occurred while saving successful symbols to {new_filename}: {e}")       # Error log for writing data
 
 def main():
-    logging.basicConfig(filename='myapp.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+    logging.basicConfig(
+        filename='myapp.log', 
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
+        level=logging.INFO
+        )
     logger.info('Session started')                                                                      # Session start info log
     filename = input("Enter the filename containing the list of stocks: ")
     if not filename.endswith('.csv'):
@@ -83,7 +87,7 @@ def main():
         df = display_data(data, sort=sort_data)
         plot_data(df)
     except Exception as e:
-        logger.error(f"An error occurred: {e}")                                                         # Error log while running main
+        logger.error(f"An error occurred: {e}", exc_info=True)                                          # Error log while running main
     finally:
         if successful_symbols:
             save_successful_symbols(filename, successful_symbols)
