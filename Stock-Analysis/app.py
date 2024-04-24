@@ -11,14 +11,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Create handler
-stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.INFO)
+stream_handler = logging.StreamHandler()                                                                # Stream handler
+stream_handler.setLevel(logging.INFO)                                                                   # Set level
 
 # Assign handler
-sf_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-stream_handler.setFormatter(sf_format)
+stream_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')                             # Stream format
+stream_handler.setFormatter(stream_format)                                                              # Assign format
 
-# Add handlers
+# Add handler
 logger.addHandler(stream_handler)
 
 def load_stocks(filename):
@@ -58,13 +58,13 @@ def save_successful_symbols(filename, successful_symbols):
             writer = csv.writer(file)
             for symbol in successful_symbols:
                 writer.writerow([symbol])
-        logger.info(f"Successful symbols saved to {new_filename}.")
+        logger.info(f"Successful symbols saved to {new_filename}.")                                     # Info log for writing data
     except Exception as e:
-        logger.error(f"An error occurred while saving successful symbols to {new_filename}: {e}")
+        logger.error(f"An error occurred while saving successful symbols to {new_filename}: {e}")       # Error log for writing data
 
 def main():
     logging.basicConfig(filename='myapp.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-    logger.info('Session started')
+    logger.info('Session started')                                                                      # Session start info log
     filename = input("Enter the filename containing the list of stocks: ")
     if not filename.endswith('.csv'):
         filename += '.csv'
@@ -83,12 +83,12 @@ def main():
         df = display_data(data, sort=sort_data)
         plot_data(df)
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}")                                                         # Error log while running main
     finally:
         if successful_symbols:
             save_successful_symbols(filename, successful_symbols)
 
-    logger.info('Session stopped')
+    logger.info('Session stopped')                                                                      # Session stop info log
 
 if __name__ == "__main__":
     main()
