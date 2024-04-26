@@ -2,4 +2,4 @@ requests
 yfinance
 tabulate
 matplotlib
-pandas
+pandaslogging
