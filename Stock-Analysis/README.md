@@ -1,41 +1,41 @@
-# Stock Analysis Python Script
+# Stock Analysis Script
 
-This Python script analyzes stock recommendations using data retrieved from Yahoo Finance via the `yfinance` library. It reads stock symbols from a CSV file and displays the recommendation mean for each stock.
+## Overview
+This script is designed to analyze stock data fetched from Yahoo Finance using the `yfinance` library. It allows users to input a list of stock symbols via a CSV file, fetch relevant data such as stock ratings, and display the data in a tabular format. Additionally, it provides an option to sort the data based on stock ratings and generate a bar plot for visualization.
+
+## Features
+- **Fetching Stock Data**: The script utilizes Yahoo Finance API to fetch stock data including stock ratings.
+- **Data Display**: It displays the fetched data in a tabular format.
+- **Sorting**: Users have the option to sort the displayed data based on stock ratings.
+- **Data Visualization**: The script can generate a bar plot to visualize the stock ratings.
+- **Error Handling**: It handles errors gracefully, logging them for debugging purposes.
+- **Multiprocessing**: To improve efficiency, the script employs multiprocessing for fetching data for multiple stocks concurrently.
+- **Logging**: Detailed logging is implemented to track the execution flow and any encountered errors.
+
+## Prerequisites
+- Python 3.x
+- Required Python packages: `requests`, `csv`, `yfinance`, `pandas`, `matplotlib`
+- Internet connection to fetch stock data from Yahoo Finance
 
 ## Usage
+1. **Install Dependencies**: Ensure that all required Python packages are installed. You can install them via pip:
+   ```
+   pip install requests yfinance pandas matplotlib
+   ```
+2. **Prepare Stock List**: Create a CSV file containing a list of stock symbols, with one symbol per line.
+3. **Run the Script**: Execute the script `main.py`. You'll be prompted to enter the filename of the CSV containing stock symbols and whether to sort the data.
+4. **View Data**: After execution, the script will display the fetched stock data. If opted, it will also generate a bar plot for visualization.
+5. **Save Successful Symbols**: Optionally, you can choose to save the symbols for which data was successfully fetched into another CSV file.
 
-To use this script, follow these steps:
+## Logging
+- Logs are stored in a file named `myapp.log` in the same directory as the script.
+- Log entries include timestamps, log levels, and detailed messages for better debugging.
 
-1. Clone the repository:
+## Additional Notes
+- Ensure that the provided CSV file contains valid stock symbols.
+- If any errors occur during execution, refer to the log file for detailed information.
+- For further assistance or inquiries, feel free to contact the script maintainer.
 
-2. Install dependencies:
-
-3. Run the script:(app.py)
-   Sort option: python app.py sort
-
-## File Structure
-
-- `stocks1.csv`: CSV file containing a list of stock symbols.
-
-## Dependencies
-
-- [requests](https://pypi.org/project/requests/): For making HTTP requests to retrieve data.
-- [yfinance](https://pypi.org/project/yfinance/): For fetching stock data from Yahoo Finance.
-- [tabulate](https://pypi.org/project/tabulate/): For formatting and displaying data in a tabular format.
-
-## Contributing
-
-Contributions are welcome! If you find any issues or have suggestions, please open an issue or create a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-*Replace `<repository_url>` with the actual URL of your GitHub repository.*
-
-Feel free to customize and expand upon this template with additional details about your project and how to use it.
 
    
 
