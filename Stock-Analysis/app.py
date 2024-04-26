@@ -42,18 +42,22 @@ def display_data(data, sort=False):
     print(df.head())
     return df
 
-def plot_data(df):
-    plt.bar(df['Symbol'], df['Rate'], color='skyblue')
-    plt.xlabel('Symbol')
-    plt.ylabel('Rate')
-    plt.title('Stock Ratings')
-    plt.xticks(rotation=45, ha='right')
+def plot_data(df, save_figure=False, figure_filename="plot.png", bar_width=0.6, font_size=5):
+    plt.bar(df['Symbol'], df['Rate'], color='skyblue', width=bar_width)
+    plt.xlabel('Symbol', fontsize=font_size)
+    plt.ylabel('Rate', fontsize=font_size)
+    plt.title('Stock Ratings', fontsize=font_size)
+    plt.xticks(rotation=45, ha='right', fontsize=font_size)
     plt.tight_layout()
-    plt.show()
+    if save_figure:
+        plt.savefig(figure_filename)  # Save the figure to a file
+        logger.info(f"Figure saved as {figure_filename}.")
+    else:
+        plt.show()
 
 def save_successful_symbols(filename, successful_symbols):
     try:
-        new_filename = os.path.splitext(filename)[0] + "_successful.csv"
+        new_filename = os.path.splitext(filename)[0] + ".csv"
         with open(new_filename, 'w') as file:
             writer = csv.writer(file)
             for symbol in successful_symbols:
@@ -64,17 +68,17 @@ def save_successful_symbols(filename, successful_symbols):
 
 def main():
     logging.basicConfig(
-        filename='myapp.log', 
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
+        filename='myapp.log',
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         level=logging.INFO
-        )
-    logger.info('Session started')                                                                      # Session start info log
+    )
+    logger.info('Session started')  # Session start info log
     filename = input("Enter the filename containing the list of stocks: ")
     if not filename.endswith('.csv'):
         filename += '.csv'
 
     sort_data = input("Sort data? (yes/no): ").lower() == 'yes'
-    successful_symbols = [] 
+    successful_symbols = []
 
     try:
         stocks = load_stocks(filename)
@@ -85,14 +89,18 @@ def main():
             if stock_info is not None and stock_info[0] is not None:
                 successful_symbols.append(stock_info[1])
         df = display_data(data, sort=sort_data)
-        plot_data(df)
+        plot_data(df, save_figure=True, figure_filename="stock_ratings.png")
+
     except Exception as e:
-        logger.error(f"An error occurred: {e}", exc_info=True)                                          # Error log while running main
+        logger.error(f"An error occurred: {e}", exc_info=True)  # Error log while running main
     finally:
-        if successful_symbols:
-            save_successful_symbols(filename, successful_symbols)
+        save_successful = input("Do you want to save successful symbols? (yes/no): ").lower() == 'yes'
+        if successful_symbols and save_successful:
+            output_filename = input("Enter the filename to save successful symbols: ")
+            if not output_filename.endswith('.csv'):
+                output_filename += '.csv'
+            save_successful_symbols(output_filename, successful_symbols)
 
-    logger.info('Session stopped')                                                                      # Session stop info log
+    logger.info('Session stopped')  # Session stop info log
 
-if __name__ == "__main__":
-    main()
+main()
