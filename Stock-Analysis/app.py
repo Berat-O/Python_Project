@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import os
 from multiprocessing import Pool
 import logging
+import datetime
+
 
 # Assign Log message
 logger = logging.getLogger(__name__)
@@ -67,7 +69,7 @@ def display_data(data, sort=False):
     print(df.head())
     return df
 
-def plot_data(df, save_figure=False, figure_filename="plot.png", bar_width=0.6, font_size=5):
+def plot_data(df, save_figure=False, figure_filename="plot.png", bar_width=0.6, font_size=3, dpi=700):
     """Plot stock ratings.
     
     Args:
@@ -76,6 +78,7 @@ def plot_data(df, save_figure=False, figure_filename="plot.png", bar_width=0.6, 
         figure_filename (str): Filename to save the plot.
         bar_width (float): Width of the bars in the bar plot.
         font_size (int): Font size for plot labels.
+        dpi (int): Dots per inch for the saved image.
     """
     plt.bar(df['Symbol'], df['Rate'], color='skyblue', width=bar_width)
     plt.xlabel('Symbol', fontsize=font_size)
@@ -84,7 +87,9 @@ def plot_data(df, save_figure=False, figure_filename="plot.png", bar_width=0.6, 
     plt.xticks(rotation=45, ha='right', fontsize=font_size)
     plt.tight_layout()
     if save_figure:
-        plt.savefig(figure_filename)  # Save the figure to a file
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
+        figure_filename = f"plot_{current_time}.png"
+        plt.savefig(figure_filename, dpi=dpi)  # Save the figure to a file with higher resolution
         logger.info(f"Figure saved as {figure_filename}.")  # Log that the figure has been saved
     else:
         plt.show()
