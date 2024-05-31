@@ -88,7 +88,7 @@ def plot_data(df, save_figure=False, figure_filename="plot.png", bar_width=0.6, 
     plt.tight_layout()
     if save_figure:
         current_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
-        figure_filename = f"plot_{current_time}.png"
+        figure_filename = f"/workspaces/Python_Project/Stock-Analysis/results/plot_{current_time}.png"
         plt.savefig(figure_filename, dpi=dpi)  # Save the figure to a file with higher resolution
         logger.info(f"Figure saved as {figure_filename}.")  # Log that the figure has been saved
     else:
