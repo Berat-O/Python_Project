@@ -87,7 +87,7 @@ def plot_data(df, save_figure=False, figure_filename="plot.png", bar_width=0.6, 
     plt.xticks(rotation=45, ha='right', fontsize=font_size)
     plt.tight_layout()
     if save_figure:
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
+        current_time = datetime.datetime.now().strftime("%d-%m-%Y")
         figure_filename = f"/workspaces/Python_Project/Stock-Analysis/results/plot_{current_time}.png"
         plt.savefig(figure_filename, dpi=dpi)  # Save the figure to a file with higher resolution
         logger.info(f"Figure saved as {figure_filename}.")  # Log that the figure has been saved
@@ -102,7 +102,9 @@ def save_successful_symbols(filename, successful_symbols):
         successful_symbols (list): List of successfully fetched stock symbols.
     """
     try:
+        path = "/workspaces/Python_Project/Stock-Analysis/data/"
         new_filename = os.path.splitext(filename)[0] + ".csv"
+        new_filename = path + new_filename
         with open(new_filename, 'w') as file:
             writer = csv.writer(file)
             for symbol in successful_symbols:
@@ -120,8 +122,12 @@ def main():
     )
     logger.info('Session started')  # Log that the session has started
     filename = input("Enter the filename containing the list of stocks: ")
+    path = "/workspaces/Python_Project/Stock-Analysis/data/"
+    filename = path + filename
+    
     if not filename.endswith('.csv'):
         filename += '.csv'
+        
 
     sort_data = input("Sort data? (yes/no): ").lower() == 'yes'
     successful_symbols = []
