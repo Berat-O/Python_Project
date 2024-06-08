@@ -36,7 +36,8 @@ def load_stocks(filename):
         reader = csv.reader(file)
         logger.info('Files loaded')  # Log that the file has been loaded
         return [line[0] for line in reader]
-
+    
+# updated the exception handling
 def fetch_stock_data(stock):
     """Fetch stock data from Yahoo Finance.
     
@@ -49,9 +50,8 @@ def fetch_stock_data(stock):
     try:
         ticker = yf.Ticker(stock)
         return [ticker.info.get("recommendationMean"), ticker.info.get("symbol")]
-    except (KeyError, requests.exceptions.HTTPError):
-        logger.error(f"Failed to load data for {stock}", exc_info=True)  # Log error if data couldn't be fetched
-        return None
+    except KeyError as e:
+        logger.error(f"Failed to load data for {stock}. Missing key: {e}") # Improved the error exception added the data catch and also catch the key error
 
 def display_data(data, sort=False):
     """Display stock data in tabular format.
@@ -94,24 +94,27 @@ def plot_data(df, save_figure=False, figure_filename="plot.png", bar_width=0.6, 
     else:
         plt.show()
 
+# updated the error handling mechanism in the code
 def save_successful_symbols(filename, successful_symbols):
-    """Save successfully fetched stock symbols to a CSV file.
-    
-    Args:
-        filename (str): Filename to save the symbols.
-        successful_symbols (list): List of successfully fetched stock symbols.
-    """
-    try:
-        path = "/workspaces/Python_Project/Stock-Analysis/data/"
-        new_filename = os.path.splitext(filename)[0] + ".csv"
-        new_filename = path + new_filename
-        with open(new_filename, 'w') as file:
-            writer = csv.writer(file)
-            for symbol in successful_symbols:
-                writer.writerow([symbol])
-        logger.info(f"Successful symbols saved to {new_filename}.")  # Log that symbols have been saved
-    except Exception as e:
-        logger.error(f"An error occurred while saving successful symbols to {new_filename}: {e}")  # Log error if saving fails
+  """Save successfully fetched stock symbols to a CSV file.
+
+  Args:
+      filename (str): Filename to save the symbols.
+      successful_symbols (list): List of successfully fetched stock symbols.
+  """
+  try:
+      path = "/workspaces/Python_Project/Stock-Analysis/data/"
+      new_filename = os.path.splitext(filename)[0] + ".csv"
+      new_filename = path + new_filename
+      with open(new_filename, 'w') as file:
+          writer = csv.writer(file)
+          for symbol in successful_symbols:
+              writer.writerow([symbol])
+      logger.info(f"Successful symbols saved to {new_filename}.")  # Log that symbols have been saved for further coders to work on
+  except OSError as e:
+      logger.error(f"An error occurred while saving successful symbols to {new_filename}: {e}")  # Log specific OSError details
+  except Exception as e:  # Fallback for other exceptions
+      logger.error(f"An unexpected error occurred: {e}")  # Log a generic message for other exceptions .
 
 def main():
     """Main function to orchestrate the execution flow."""
