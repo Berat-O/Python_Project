@@ -5,7 +5,7 @@ from fetch_stocks import StockFetcher
 from data_processor import DataProcessor
 from plot_stocks import StockPlotter
 
-class Main():
+class Main:
 
     def __init__(self):
         # Assign Log message
@@ -69,6 +69,7 @@ class Main():
 
         self.logger.info('Session stopped')  # Log that the session has stopped
 
-if __name__ == '__main__': # If the script is being run directly, call the main function
+if __name__ == '__main__':  # If the script is being run directly, call the main function
     app = Main()  # Create an instance of the class
     app.main()  # Call the main function to start the script
+
