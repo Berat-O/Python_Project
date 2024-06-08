@@ -148,12 +148,27 @@ def check_password(aim: str) -> str:
 
     # Check if the aim is valid and not empty
     if aim:
+        # Check if the password file exists
+        if not os.path.isfile(PASSWORD_FILE):
+            print(Fore.RED + "Password file does not exist. Please create a password first." + Style.RESET_ALL)
+            return None
+
         # Read the passwords from the CSV file and find the matching one for the aim
         with open(PASSWORD_FILE, "r") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 if aim == row["aim"]:
                     return row["password"]
+        # If the aim is not found in the file
+        print(Fore.RED + "No password found for the specified aim." + Style.RESET_ALL)
+        return None
+    else:
+        # Display an error message if the aim is empty
+        print("--------------------------------------------------------------")
+        print(Fore.RED + "Aim unspecified or empty. Please specify an 'aim' value.")
+        print(Style.RESET_ALL)
+        print("--------------------------------------------------------------")
+        return None
 
 
 def edit_password(aim: str) -> None:
