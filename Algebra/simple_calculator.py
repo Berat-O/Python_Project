@@ -44,74 +44,115 @@ def main():
 
 
 def add():
-  a = int(input('Enter an integer: '))
-  b = int(input('Enter an integer: '))
-  print(f"a+b = {a+b}")
+  try:
+    a = int(input('Enter an integer: '))
+    b = int(input('Enter an integer: '))
+    print(f"a+b = {a+b}")
+  except ValueError:
+    print("Invalid input. Please enter integers only.")
 
 def subtract():
-  a = int(input('Enter an integer: '))
-  b = int(input('Enter an integer: '))
-  print(f"a-b = {a-b}")
+  try:
+    a = int(input('Enter an integer: '))
+    b = int(input('Enter an integer: '))
+    print(f"a-b = {a-b}")
+  except ValueError:
+    print("Invalid input. Please enter integers only.")
 
 def multiply():
-  a = int(input('Enter an integer: '))
-  b = int(input('Enter an integer: '))
-  print(f"a*b = {a*b}")
+  try:
+    a = int(input('Enter an integer: '))
+    b = int(input('Enter an integer: '))
+    print(f"a*b = {a*b}")
+  except ValueError:
+    print("Invalid input. Please enter integers only.")
 
 def divide():
-  a = int(input('Enter an integer: '))
-  b = int(input('Enter an integer: '))
-  if b == 0:
-    print("Cannot divide by zero!")
-  else:
-    print(f"a/b = {a/b}")
-
+  try:
+    a = int(input('Enter an integer: '))
+    b = int(input('Enter an integer: '))
+    if b == 0:
+      print("Cannot divide by zero!")
+    else:
+      print(f"a/b = {a/b}")
+  except ValueError:
+      print("Invalid input. Please enter integers only.")
 def prime_number():
-  number = int(input("Enter a positive integer: "))
-  is_prime = all(number % i != 0 for i in range(2, number))
-  print("prime" if is_prime else "composite")
+  try:
+    number = int(input("Enter a positive integer: "))
+    if number <= 0:
+        print("Invalid input. Please enter a positive integer.")
+        return
+    is_prime = all(number % i != 0 for i in range(2, number))
+    print("prime" if is_prime else "composite")
+  except ValueError:
+    print("Invalid input. Please enter a positive integer.")
 
 def prime_factor():
-  number = int(input('Enter an integer: '))
-  factors = [i for i in range(1, number + 1) if number % i == 0]
-  print(factors)
+  try:
+    number = int(input('Enter an integer: '))
+    if number <= 0:
+        print("Invalid input. Please enter a positive integer.")
+        return
+    factors = [i for i in range(1, number + 1) if number % i == 0]
+    print(factors)
+  except ValueError:
+    print("Invalid input. Please enter a positive integer.")
 
 def square_root():
-  n = int(input('Without the radical, enter a square root to factor: '))
-  max_factor = max(i**2 for i in range(1, math.isqrt(n) + 1) if n % (i**2) == 0)
-  other_factor = n // max_factor
-  square_root = int(math.sqrt(max_factor))
-  output = square_root * sqrt(other_factor)
-  print(output)
+  try:
+    n = int(input('Without the radical, enter a square root to factor: '))
+    if n <= 0:
+        print("Invalid input. Please enter a positive integer.")
+        return
+    max_factor = max(i**2 for i in range(1, math.isqrt(n) + 1) if n % (i**2) == 0)
+    other_factor = n // max_factor
+    square_root = int(math.sqrt(max_factor))
+    output = square_root * sqrt(other_factor)
+    print(output)
+  except ValueError:
+    print("Invalid input. Please enter a positive integer.")
 
 def solve():
-  x = symbols('x')
-  eq = input('Enter an equation to solve for x: 0 = ')
-  solutions = solve(eq, x)
-  print(f"x = {solutions[0]}" if solutions else "No solutions found.")
+  try:
+    x = symbols('x')
+    eq = input('Enter an equation to solve for x: 0 = ')
+    solutions = solve(eq, x)
+    print(f"x = {solutions[0]}" if solutions else "No solutions found.")
+  except (ValueError, TypeError, IndexError):
+    print("Invalid equation or no solutions found.")
 
 def convert_decimals_to():
-  decimal = float(input("Enter a decimal number to convert: "))
-  fraction = Fraction(decimal).limit_denominator()
-  percent = decimal * 100
-  print(f"The decimal is {decimal}")
-  print(f"The fraction is {fraction}")
-  print(f"The percent is {percent}%")
+  try:
+    decimal = float(input("Enter a decimal number to convert: "))
+    fraction = Fraction(decimal).limit_denominator()
+    percent = decimal * 100
+    print(f"The decimal is {decimal}")
+    print(f"The fraction is {fraction}")
+    print(f"The percent is {percent}%")
+  except ValueError:
+    print("Invalid input. Please enter a valid decimal number.")
 
 def convert_fractions_to():
-  fraction = input("Enter a fraction (numerator/denominator): ")
-  numerator, denominator = map(int, fraction.split("/"))
-  decimal = numerator / denominator
-  percent = decimal * 100
-  print(f"The decimal is {decimal}")
-  print(f"The percent is {percent}%")
+  try:
+    fraction = input("Enter a fraction (numerator/denominator): ")
+    numerator, denominator = map(int, fraction.split("/"))
+    decimal = numerator / denominator
+    percent = decimal * 100
+    print(f"The decimal is {decimal}")
+    print(f"The percent is {percent}%")
+  except (ValueError, ZeroDivisionError):
+    print("Invalid input. Please enter a valid fraction.")
 
 def convert_percents_to():
-  percent = float(input("Enter a percent: ").strip("%"))
-  decimal = percent / 100
-  fraction = Fraction(decimal).limit_denominator()
-  print(f"The decimal is {decimal}")
-  print(f"The fraction is {fraction}")
+  try:
+    percent = float(input("Enter a percent: ").strip("%"))
+    decimal = percent / 100
+    fraction = Fraction(decimal).limit_denominator()
+    print(f"The decimal is {decimal}")
+    print(f"The fraction is {fraction}")
+  except ValueError:
+    print("Invalid input. Please enter a valid percent.")
 
 # Write your code here
 
