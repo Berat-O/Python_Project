@@ -20,13 +20,9 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    count = [0, 0]
-    for i in range(3):
-        for j in range(3):
-            if board[i][j] == "X":
-                count[0] = count[0] + 1
-            elif board[i][j] == "O":
-                count[1] = count[1] + 1
+    count = [sum(1 for i in range(3) for j in range(3) if board[i][j] == "X"),
+             sum(1 for i in range(3) for j in range(3) if board[i][j] == "O")]
+
 
     if count[0] > count[1]:
         return O
