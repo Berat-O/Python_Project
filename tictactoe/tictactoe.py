@@ -34,13 +34,7 @@ def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    possible_action = []
-    for i in range(3):
-        for j in range(3):
-            if board[i][j] == None:
-                possible_action.append((i, j))
-
-    return possible_action
+    return [(i, j) for i in range(3) for j in range(3) if board[i][j] is None]
 
 
 def result(board, action):
@@ -54,7 +48,7 @@ def result(board, action):
         copy_board[action[0]][action[1]] = a
         return copy_board
     else:
-        raise "eror"
+        raise "error"
 
 
 def winner(board):
