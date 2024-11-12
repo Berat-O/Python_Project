@@ -1,27 +1,25 @@
-from multiprocessing import Pool
+import os
 import logging
+from multiprocessing import Pool
 from load_stocks import StockLoader
 from fetch_stocks import StockFetcher
 from data_processor import DataProcessor
 from plot_stocks import StockPlotter
 
-class Main:
 
+class Main:
     def __init__(self):
-        # Assign Log message
+        """Initialize the Main class with the necessary components and configure logging."""
+        # Create a logger instance
         self.logger = logging.getLogger(__name__)
 
-        # Create handler
-        stream_handler = logging.StreamHandler()  # Create a stream handler to output logs to console
-        stream_handler.setLevel(logging.INFO)    # Set the log level to INFO
+        # Set up logging configuration
+        logging.basicConfig(
+            level=logging.INFO,  # Set the logging level to INFO
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',  # Define the log format
+            handlers=[logging.StreamHandler()]  # Log to console
+        )
 
-        # Assign handler
-        stream_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')  # Define the format for log messages
-        stream_handler.setFormatter(stream_format)  # Assign the format to the stream handler
-
-        # Add handler
-        self.logger.addHandler(stream_handler)  # Add the stream handler to the logger
-        
         # Initialize instances of other classes
         self.stock_loader = StockLoader()
         self.stock_fetcher = StockFetcher()
@@ -30,36 +28,48 @@ class Main:
 
     def main(self):
         """Main function to orchestrate the execution flow."""
-        logging.basicConfig(
-            filename='myapp.log',
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            level=logging.INFO
-        )
-        self.logger.info('Session started')  # Log that the session has started
+        self.logger.info('Session started')  # Log the start of the session
+        
+        # Get the input filename and handle paths
         filename = input("Enter the filename containing the list of stocks: ")
         path = "/workspaces/Python_Project/Stock-Analysis/data/"
-        filename = path + filename
-        
+        filename = os.path.join(path, filename)
+
+        # Ensure the file has a '.csv' extension
         if not filename.endswith('.csv'):
             filename += '.csv'
-            
+
+        # Ask the user if they want to sort the data
         sort_data = input("Sort data? (yes/no): ").lower() == 'yes'
+
+        # Initialize a list to store successful stock symbols
         successful_symbols = []
 
+        # Load and process stock data
         try:
+            if not os.path.exists(filename):
+                raise FileNotFoundError(f"The file {filename} does not exist.")
+            
+            # Load stock symbols from the file
             stocks = self.stock_loader.load_stocks(filename)
-            # Use multiprocessing to fetch data for multiple stocks concurrently
+
+            # Use multiprocessing to fetch stock data concurrently
             with Pool() as pool:
                 data = pool.map(self.stock_fetcher.fetch_stock_data, stocks)
+
+            # Process the fetched data and filter out unsuccessful fetches
             for stock_info in data:
                 if stock_info is not None and stock_info[0] is not None:
                     successful_symbols.append(stock_info[1])
+
+            # Display the data and plot
             df = self.data_processor.display_data(data, sort=sort_data)
             self.stock_plotter.plot_data(df, save_figure=True, figure_filename="stock_ratings.png")
 
         except Exception as e:
-            self.logger.error(f"An error occurred: {e}", exc_info=True)  # Log error if an exception occurs
+            self.logger.error(f"An error occurred: {e}", exc_info=True)
         finally:
+            # Optionally save successful symbols
             save_successful = input("Do you want to save successful symbols? (yes/no): ").lower() == 'yes'
             if successful_symbols and save_successful:
                 output_filename = input("Enter the filename to save successful symbols: ")
@@ -67,9 +77,11 @@ class Main:
                     output_filename += '.csv'
                 self.data_processor.save_successful_symbols(output_filename, successful_symbols)
 
-        self.logger.info('Session stopped')  # Log that the session has stopped
+        # Log the end of the session
+        self.logger.info('Session stopped')  # Log the stop of the session
 
-if __name__ == '__main__':  # If the script is being run directly, call the main function
-    app = Main()  # Create an instance of the class
-    app.main()  # Call the main function to start the script
 
+# If the script is being run directly, instantiate and call the main function
+if __name__ == '__main__':
+    app = Main()  # Create an instance of the Main class
+    app.main()  # Start the execution
