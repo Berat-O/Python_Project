@@ -1,146 +1,150 @@
 import pygame
 import sys
 import time
-
 import tictactoe as ttt
 
+# Initialize Pygame
 pygame.init()
-size = width, height = 600, 400
 
-# Colors
-black = (0, 0, 0)
-white = (255, 255, 255)
+# Constants
+WIDTH, HEIGHT = 600, 400
+TILE_SIZE = 80
+TILE_ORIGIN = (WIDTH / 2 - 1.5 * TILE_SIZE, HEIGHT / 2 - 1.5 * TILE_SIZE)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
-screen = pygame.display.set_mode(size)
+# Initialize the screen and fonts
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+medium_font = pygame.font.Font("OpenSans-Regular.ttf", 28)
+large_font = pygame.font.Font("OpenSans-Regular.ttf", 40)
+move_font = pygame.font.Font("OpenSans-Regular.ttf", 60)
 
-mediumFont = pygame.font.Font("OpenSans-Regular.ttf", 28)
-largeFont = pygame.font.Font("OpenSans-Regular.ttf", 40)
-moveFont = pygame.font.Font("OpenSans-Regular.ttf", 60)
-
+# Initialize game state
 user = None
 board = ttt.initial_state()
 ai_turn = False
 
-while True:
+def draw_title(text, y_offset=30):
+    """Helper function to draw the title text on the screen."""
+    title = large_font.render(text, True, WHITE)
+    title_rect = title.get_rect(center=(WIDTH / 2, y_offset))
+    screen.blit(title, title_rect)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
+def draw_buttons():
+    """Draw the buttons for selecting player X or O."""
+    play_x_button = pygame.Rect(WIDTH / 8, HEIGHT / 2, WIDTH / 4, 50)
+    play_o_button = pygame.Rect(5 * (WIDTH / 8), HEIGHT / 2, WIDTH / 4, 50)
 
-    screen.fill(black)
+    play_x_text = medium_font.render("Play as X", True, BLACK)
+    play_o_text = medium_font.render("Play as O", True, BLACK)
 
-    # Let user choose a player.
-    if user is None:
+    pygame.draw.rect(screen, WHITE, play_x_button)
+    pygame.draw.rect(screen, WHITE, play_o_button)
+    screen.blit(play_x_text, play_x_text.get_rect(center=play_x_button.center))
+    screen.blit(play_o_text, play_o_text.get_rect(center=play_o_button.center))
 
-        # Draw title
-        title = largeFont.render("Play Tic-Tac-Toe", True, white)
-        titleRect = title.get_rect()
-        titleRect.center = ((width / 2), 50)
-        screen.blit(title, titleRect)
+    return play_x_button, play_o_button
 
-        # Draw buttons
-        playXButton = pygame.Rect((width / 8), (height / 2), width / 4, 50)
-        playX = mediumFont.render("Play as X", True, black)
-        playXRect = playX.get_rect()
-        playXRect.center = playXButton.center
-        pygame.draw.rect(screen, white, playXButton)
-        screen.blit(playX, playXRect)
+def draw_board():
+    """Draw the Tic-Tac-Toe grid and the current game state."""
+    tiles = []
+    for i in range(3):
+        row = []
+        for j in range(3):
+            rect = pygame.Rect(TILE_ORIGIN[0] + j * TILE_SIZE, TILE_ORIGIN[1] + i * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            pygame.draw.rect(screen, WHITE, rect, 3)
 
-        playOButton = pygame.Rect(5 * (width / 8), (height / 2), width / 4, 50)
-        playO = mediumFont.render("Play as O", True, black)
-        playORect = playO.get_rect()
-        playORect.center = playOButton.center
-        pygame.draw.rect(screen, white, playOButton)
-        screen.blit(playO, playORect)
+            if board[i][j] != ttt.EMPTY:
+                move = move_font.render(board[i][j], True, WHITE)
+                move_rect = move.get_rect(center=rect.center)
+                screen.blit(move, move_rect)
+            row.append(rect)
+        tiles.append(row)
+    return tiles
 
-        # Check if button is clicked
-        click, _, _ = pygame.mouse.get_pressed()
-        if click == 1:
-            mouse = pygame.mouse.get_pos()
-            if playXButton.collidepoint(mouse):
-                time.sleep(0.2)
-                user = ttt.X
-            elif playOButton.collidepoint(mouse):
-                time.sleep(0.2)
-                user = ttt.O
+def handle_game_over():
+    """Draw the 'Play Again' button if the game is over."""
+    again_button = pygame.Rect(WIDTH / 3, HEIGHT - 65, WIDTH / 3, 50)
+    again_text = medium_font.render("Play Again", True, BLACK)
+    pygame.draw.rect(screen, WHITE, again_button)
+    screen.blit(again_text, again_text.get_rect(center=again_button.center))
 
-    else:
+    return again_button
 
-        # Draw game board
-        tile_size = 80
-        tile_origin = (width / 2 - (1.5 * tile_size),
-                       height / 2 - (1.5 * tile_size))
-        tiles = []
-        for i in range(3):
-            row = []
-            for j in range(3):
-                rect = pygame.Rect(
-                    tile_origin[0] + j * tile_size,
-                    tile_origin[1] + i * tile_size,
-                    tile_size, tile_size
-                )
-                pygame.draw.rect(screen, white, rect, 3)
+def main():
+    global user, board, ai_turn
 
-                if board[i][j] != ttt.EMPTY:
-                    move = moveFont.render(board[i][j], True, white)
-                    moveRect = move.get_rect()
-                    moveRect.center = rect.center
-                    screen.blit(move, moveRect)
-                row.append(rect)
-            tiles.append(row)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
-        game_over = ttt.terminal(board)
-        player = ttt.player(board)
+        screen.fill(BLACK)
 
-        # Show title
-        if game_over:
-            winner = ttt.winner(board)
-            if winner is None:
-                title = f"Game Over: Tie."
-            else:
-                title = f"Game Over: {winner} wins."
-        elif user == player:
-            title = f"Play as {user}"
-        else:
-            title = f"Computer thinking..."
-        title = largeFont.render(title, True, white)
-        titleRect = title.get_rect()
-        titleRect.center = ((width / 2), 30)
-        screen.blit(title, titleRect)
+        # Handle user selection of X or O
+        if user is None:
+            draw_title("Play Tic-Tac-Toe", y_offset=50)
+            play_x_button, play_o_button = draw_buttons()
 
-        # Check for AI move
-        if user != player and not game_over:
-            if ai_turn:
-                time.sleep(0.5)
-                move = ttt.minimax(board)
-                board = ttt.result(board, move)
-                ai_turn = False
-            else:
-                ai_turn = True
-
-        # Check for a user move
-        click, _, _ = pygame.mouse.get_pressed()
-        if click == 1 and user == player and not game_over:
-            mouse = pygame.mouse.get_pos()
-            for i in range(3):
-                for j in range(3):
-                    if (board[i][j] == ttt.EMPTY and tiles[i][j].collidepoint(mouse)):
-                        board = ttt.result(board, (i, j))
-
-        if game_over:
-            againButton = pygame.Rect(width / 3, height - 65, width / 3, 50)
-            again = mediumFont.render("Play Again", True, black)
-            againRect = again.get_rect()
-            againRect.center = againButton.center
-            pygame.draw.rect(screen, white, againButton)
-            screen.blit(again, againRect)
             click, _, _ = pygame.mouse.get_pressed()
             if click == 1:
                 mouse = pygame.mouse.get_pos()
-                if againButton.collidepoint(mouse):
+                if play_x_button.collidepoint(mouse):
+                    user = ttt.X
                     time.sleep(0.2)
-                    user = None
-                    board = ttt.initial_state()
-                    ai_turn = False
+                elif play_o_button.collidepoint(mouse):
+                    user = ttt.O
+                    time.sleep(0.2)
 
-    pygame.display.flip()
+        else:
+            # Draw the game board and handle game states
+            tiles = draw_board()
+            game_over = ttt.terminal(board)
+            current_player = ttt.player(board)
+
+            if game_over:
+                winner = ttt.winner(board)
+                title = f"Game Over: Tie." if winner is None else f"Game Over: {winner} wins."
+            elif user == current_player:
+                title = f"Play as {user}"
+            else:
+                title = "Computer thinking..."
+
+            draw_title(title)
+
+            # Handle AI turn if it is AI's turn
+            if user != current_player and not game_over:
+                if ai_turn:
+                    time.sleep(0.5)
+                    move = ttt.minimax(board)
+                    board = ttt.result(board, move)
+                    ai_turn = False
+                else:
+                    ai_turn = True
+
+            # Handle user input for their move
+            click, _, _ = pygame.mouse.get_pressed()
+            if click == 1 and user == current_player and not game_over:
+                mouse = pygame.mouse.get_pos()
+                for i in range(3):
+                    for j in range(3):
+                        if board[i][j] == ttt.EMPTY and tiles[i][j].collidepoint(mouse):
+                            board = ttt.result(board, (i, j))
+
+            # If the game is over, offer to play again
+            if game_over:
+                again_button = handle_game_over()
+                click, _, _ = pygame.mouse.get_pressed()
+                if click == 1:
+                    mouse = pygame.mouse.get_pos()
+                    if again_button.collidepoint(mouse):
+                        time.sleep(0.2)
+                        user = None
+                        board = ttt.initial_state()
+                        ai_turn = False
+
+        pygame.display.flip()
+
+if __name__ == "__main__":
+    main()
