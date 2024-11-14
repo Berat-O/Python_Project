@@ -1,9 +1,5 @@
 import csv
 import logging
-import os
-
-# Set up logging for the module
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 class StockLoader:
 
@@ -17,17 +13,7 @@ class StockLoader:
         Returns:
             list: A list of stock symbols.
         """
-        if not os.path.isfile(filename):  # Check if the file exists
-            logging.error(f"File {filename} does not exist.")
-            return []  # Return an empty list if the file does not exist
-
-        try:
-            with open(filename, 'r') as file:
-                reader = csv.reader(file)
-                stock_symbols = [line[0] for line in reader if line]  # Ensures non-empty lines are read
-                logging.info(f"Successfully loaded {len(stock_symbols)} stock symbols from {filename}.")
-                return stock_symbols
-        except Exception as e:
-            logging.error(f"Error reading the file {filename}: {e}")
-            return []
-
+        with open(filename, 'r') as file:
+            reader = csv.reader(file)
+            logging.getLogger(__name__).info('Files loaded')  # Log that the file has been loaded
+            return [line[0] for line in reader]
