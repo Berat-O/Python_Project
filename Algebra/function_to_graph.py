@@ -1,53 +1,41 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import sympy as sp
 
-def get_user_equation():
-    """Prompts the user to input an equation for y in terms of x."""
-    while True:
-        eq = input("Enter the equation for y in terms of x: ")
-        try:
-            x = sp.symbols('x')
-            y_expr = sp.sympify(eq)
-            y_func = sp.lambdify(x, y_expr, 'numpy')
-            return y_func, eq
-        except (sp.SympifyError, TypeError):
-            print("Invalid equation. Please enter a valid mathematical expression.")
 
-def plot_graph(y_func, equation_str):
-    """Plots the graph of the equation y = y_func(x)."""
-    # Set the graph limits and generate x values
-    xmin, xmax = -100, 100
-    ymin, ymax = -100, 100
-    x = np.linspace(xmin, xmax, 500)
+xmin = -100
+xmax = 100
+ymin = -100
+ymax = 100
+points = xmax - xmin
+x = np.linspace(xmin, xmax, points)
 
-    # Calculate y values safely, handling any runtime issues
+
+while True:
+    eq = input("Enter the equation for y in terms of x: ")
+
+    # Use eval() to evaluate the user's input as a mathematical expression
     try:
-        y = y_func(x)
-    except Exception as e:
-        print(f"Error evaluating the equation over the range: {e}")
-        return
+        y = eval(eq)  # Evaluate the expression with x as a variable
+        break
+    except:
+        print("Invalid input equation.")
 
-    # Initialize plot
-    fig, ax = plt.subplots()
-    ax.set_xlim(xmin, xmax)
-    ax.set_ylim(ymin, ymax)
-    ax.plot([xmin, xmax], [0, 0], "b")  # x-axis
-    ax.plot([0, 0], [ymin, ymax], "b")  # y-axis
 
-    # Plot settings
-    ax.set_xlabel("x values")
-    ax.set_ylabel("y values")
-    ax.set_title(f"Graph of y = {equation_str}")
-    ax.grid(True)
-    ax.set_xticks(np.arange(xmin, xmax + 1, 20))
-    ax.set_yticks(np.arange(ymin, ymax + 1, 20))
+fig, ax = plt.subplots()
+plt.axis([xmin, xmax, ymin, ymax])
+plt.plot([xmin, xmax], [0, 0], "b")
+plt.plot([0, 0], [ymin, ymax], "b")
 
-    # Plot the equation
-    ax.plot(x, y, label=f"y = {equation_str}", color='red')
-    ax.legend()
-    plt.show()
+ax.set_xlabel("x values")
+ax.set_ylabel("y values")
+ax.set_title("Equation Graph")
+ax.grid(True)
 
-if __name__ == "__main__":
-    y_function, equation_text = get_user_equation()
-    plot_graph(y_function, equation_text)
+ax.set_xticks(np.arange(xmin, xmax, 20))
+ax.set_yticks(np.arange(ymin, ymax, 20))
+
+
+plt.plot(x, y, label=f"y= {eq}")
+
+plt.legend()
+plt.show()
