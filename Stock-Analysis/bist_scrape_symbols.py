@@ -23,13 +23,13 @@ with open('symbols.csv', 'w', newline='', encoding='utf-8') as csvfile:
     csvwriter.writerow(['Symbol'])
     
     # Iterate through each link found on the webpage
-    for link in links:
-        # Extract the text from the link and remove any leading/trailing whitespace
-        text = link.get_text(strip=True)
-        
-        # Check if the extracted text contains unwanted phrases
-        if "PwC BAĞIMSIZ DENETİM VE SERBEST MUHASEBECİ MALİ MÜŞAVİRLİK A.Ş" not in text and "A.Ş." not in text:
-            # Split the text by commas
-            for symbol in text.split(","):
-                # Append '.IS' to each symbol and write it to the CSV file
-                csvwriter.writerow([symbol.strip() + ".IS"])
+    # Extract the text from the link and remove any leading/trailing whitespace
+    # Check if the extracted text contains unwanted phrases
+    # Split the text by commas
+    # Append '.IS' to each symbol and write it to the CSV file
+    [csvwriter.writerow([symbol.strip() + ".IS"]) 
+     for link in links 
+     for text in [link.get_text(strip=True)]
+     if "PwC BAĞIMSIZ DENETİM VE SERBEST MUHASEBECİ MALİ MÜŞAVİRLİK A.Ş" not in text and "A.Ş." not in text
+     for symbol in text.split(",")]
+

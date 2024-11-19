@@ -20,13 +20,9 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    count = [0, 0]
-    for i in range(3):
-        for j in range(3):
-            if board[i][j] == "X":
-                count[0] = count[0] + 1
-            elif board[i][j] == "O":
-                count[1] = count[1] + 1
+    count = [sum(1 for i in range(3) for j in range(3) if board[i][j] == "X"),
+             sum(1 for i in range(3) for j in range(3) if board[i][j] == "O")]
+
 
     if count[0] > count[1]:
         return O
@@ -38,13 +34,7 @@ def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    possible_action = []
-    for i in range(3):
-        for j in range(3):
-            if board[i][j] == None:
-                possible_action.append((i, j))
-
-    return possible_action
+    return [(i, j) for i in range(3) for j in range(3) if board[i][j] is None]
 
 
 def result(board, action):
@@ -58,7 +48,7 @@ def result(board, action):
         copy_board[action[0]][action[1]] = a
         return copy_board
     else:
-        raise "eror"
+        raise "error"
 
 
 def winner(board):
