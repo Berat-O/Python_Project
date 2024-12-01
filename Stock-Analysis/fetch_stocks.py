@@ -1,23 +1,25 @@
-import requests
 import yfinance as yf
 import logging
-
+from urllib.error import URLError
 
 class StockFetcher:
 
     @staticmethod
     def fetch_stock_data(stock):
-        """Fetch stock data from Yahoo Finance.
-        
-        Args:
-            stock (str): Stock symbol.
-            
-        Returns:
-            list or None: A list containing stock rating and symbol, or None if data couldn't be fetched.
-        """
+        """Fetch stock data from Yahoo Finance."""
         try:
             ticker = yf.Ticker(stock)
-            return [ticker.info.get("recommendationMean"), ticker.info.get("symbol")]
-        except (KeyError, requests.exceptions.HTTPError):
-            logging.getLogger(__name__).error(f"Failed to load data for {stock}", exc_info=True)  # Log error if data couldn't be fetched
-            return None
+            info = ticker.info
+            if not info or 'recommendationMean' not in info:
+                raise ValueError("Recommendation data is missing")
+            rate = info["recommendationMean"]
+            return (rate, stock)
+        except ValueError as e:
+            logging.getLogger(__name__).error(f"Value error for stock {stock}: {e}")
+        except KeyError as e:
+            logging.getLogger(__name__).error(f"Key error for stock {stock}: {e}", exc_info=True)
+        except URLError as e:
+            logging.getLogger(__name__).error(f"Network error while fetching data for {stock}: {e}")
+        except Exception as e:
+            logging.getLogger(__name__).error(f"Unexpected error while fetching data for {stock}: {e}", exc_info=True)
+        return None
