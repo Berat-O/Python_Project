@@ -48,7 +48,7 @@ The app stores password information in a CSV file named password.csv in the same
 
 # Security Notice
 
-This Password Manager App is a simple utility for managing passwords and does not provide advanced security features. It's essential to keep the CSV file containing passwords secure, as it is not encrypted.
+This Password Manager App is a simple utility for managing passwords and does not provide advanced security features. As the CSV file containing passwords is not encrypted, it's essential to keep it secure.
 
 
 
