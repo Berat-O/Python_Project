@@ -2,13 +2,13 @@
 
 # Basic Python Projects
 
-Welcome to the Basic Python Projects repository! We have a list of beginner-friendly tasks to help you get started with contributing to our project. These tasks are perfect if you're new to open-source or Python development.
+Welcome to the Basic Python Projects repository! We have a list of beginner-friendly tasks to help you contribute to our project. These tasks are perfect if you're new to open-source or Python development.
 
 ## Good First Issue
 
 Looking for a way to dive in? Here are some "Good First Issue" tasks that you can contribute to:
 
-1. **Tic-Tac-Toe** (https://github.com/kelork/Python_Project/tree/main/tictactoe)
+1. [**Tic-Tac-Toe**](https://github.com/kelork/Python_Project/tree/main/tictactoe)
    
    
 
