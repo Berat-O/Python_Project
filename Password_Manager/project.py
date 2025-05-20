@@ -112,6 +112,12 @@ def edit_password(aim, fernet):
     update_db(aim, password_encrypted)
     display_message(f"Password updated successfully.\nYour new password is {new_password}.")
     conn.close()
+    
+def delete_db(aim):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM passwords WHERE aim = ?", (aim,))
+    conn.commit()
+    conn.close()
 
 def del_password(aim):
     if not validate_aim(aim):
