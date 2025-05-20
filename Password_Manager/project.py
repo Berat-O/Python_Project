@@ -1,13 +1,117 @@
 import random
 import string
-import csv
 import os
 import time
+import sqlite3
+import hashlib
 from colorama import Fore, Style
 
 STRING_LENGTH = 6
 PUNCTUATION_LENGTH = 4
-PASSWORD_FILE = "password.csv"
+DB_FILE = "passwords.db"
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS passwords (
+            aim TEXT PRIMARY KEY,
+            password_hash TEXT NOT NULL
+        )
+    ''')
+    return conn
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def read_db():
+    conn = get_db_connection()
+    cursor = conn.execute("SELECT aim, password_hash FROM passwords")
+    data = [{"aim": row[0], "password": row[1]} for row in cursor.fetchall()]
+    conn.close()
+    return data
+
+def write_db(aim, password_hash):
+    conn = get_db_connection()
+    conn.execute("INSERT INTO passwords (aim, password_hash) VALUES (?, ?)", (aim, password_hash))
+    conn.commit()
+    conn.close()
+
+def update_db(aim, password_hash):
+    conn = get_db_connection()
+    conn.execute("UPDATE passwords SET password_hash = ? WHERE aim = ?", (password_hash, aim))
+    conn.commit()
+    conn.close()
+
+def delete_db(aim):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM passwords WHERE aim = ?", (aim,))
+    conn.commit()
+    conn.close()
+
+def password_generator():
+    char_sets = [string.ascii_lowercase, string.ascii_uppercase, string.punctuation, string.digits]
+    password = [random.choice(char_set) for char_set in char_sets]
+    password.extend(random.choices("".join(char_sets), k=STRING_LENGTH + PUNCTUATION_LENGTH + 4 - len(char_sets)))
+    random.shuffle(password)
+    return "".join(password)
+
+def display_message(message, color=Fore.GREEN):
+    print(color + message + Style.RESET_ALL)
+    time.sleep(2)
+
+def create_password(aim):
+    if not validate_aim(aim):
+        return
+    data = read_db()
+    if aim in [row["aim"] for row in data]:
+        display_message(f"'{aim}' is unavailable. Please use a different aim.", Fore.RED)
+        return
+    password = password_generator()
+    password_hash = hash_password(password)
+    write_db(aim, password_hash)
+    display_message(f"Password created successfully.\n{aim} password is: {password}")
+
+def check_password(aim):
+    if not validate_aim(aim):
+        return None
+    conn = get_db_connection()
+    cursor = conn.execute("SELECT password_hash FROM passwords WHERE aim = ?", (aim,))
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        display_message("Password hash is: " + row[0])
+        return row[0]
+    display_message("No password found for the specified aim.", Fore.RED)
+    return None
+
+def edit_password(aim):
+    if not validate_aim(aim):
+        return
+    conn = get_db_connection()
+    cursor = conn.execute("SELECT aim FROM passwords WHERE aim = ?", (aim,))
+    if not cursor.fetchone():
+        display_message(f"No password found for '{aim}'.", Fore.RED)
+        conn.close()
+        return
+    new_password = input("Enter the new password: ")
+    if new_password != input("Re-enter the new password: "):
+        display_message("Passwords do not match. Password update failed.", Fore.RED)
+        conn.close()
+        return
+    password_hash = hash_password(new_password)
+    update_db(aim, password_hash)
+    display_message(f"Password updated successfully.\nYour new password is {new_password}.")
+    conn.close()
+
+def del_password(aim):
+    if not validate_aim(aim):
+        return
+    data = read_db()
+    if aim not in [row["aim"] for row in data]:
+        display_message(f"No password found for '{aim}'.", Fore.RED)
+        return
+    delete_db(aim)
+    display_message(f"Password deleted successfully for aim: {aim}")
 
 def main_menu():
     """Display the main menu and get the user's choice."""
@@ -31,86 +135,6 @@ def validate_aim(aim):
         display_message("Aim unspecified or empty. Please specify an 'aim' value.", Fore.RED)
         return False
     return True
-
-def read_csv_file():
-    """Read the CSV file and return the data as a list of dictionaries."""
-    if not os.path.isfile(PASSWORD_FILE):
-        return []
-    with open(PASSWORD_FILE, "r") as csvfile:
-        return list(csv.DictReader(csvfile))
-
-def write_csv_file(data):
-    """Write the data to the CSV file."""
-    with open(PASSWORD_FILE, "w", newline="") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=["aim", "password"])
-        writer.writeheader()
-        writer.writerows(data)
-
-def password_generator():
-    """Generate a random password with lowercase, uppercase, punctuation, and numeric characters."""
-    char_sets = [string.ascii_lowercase, string.ascii_uppercase, string.punctuation, string.digits]
-    password = [random.choice(char_set) for char_set in char_sets]
-    password.extend(random.choices("".join(char_sets), k=STRING_LENGTH + PUNCTUATION_LENGTH + 4 - len(char_sets)))
-    random.shuffle(password)
-    return "".join(password)
-
-def display_message(message, color=Fore.GREEN):
-    """Display a message in the specified color."""
-    print(color + message + Style.RESET_ALL)
-    time.sleep(2)
-
-def create_password(aim):
-    """Create a new password for a given aim and save it to the CSV file."""
-    if not validate_aim(aim):
-        return
-    data = read_csv_file()
-    if aim in [row["aim"] for row in data]:
-        display_message(f"'{aim}' is unavailable. Please use a different aim.", Fore.RED)
-        return
-    password = password_generator()
-    data.append({"aim": aim, "password": password})
-    write_csv_file(data)
-    display_message(f"Password created successfully.\n{aim} password is: {password}")
-
-def check_password(aim):
-    """Check the password for a given aim from the CSV file."""
-    if not validate_aim(aim):
-        return None
-    data = read_csv_file()
-    for row in data:
-        if aim == row["aim"]:
-            return row["password"]
-    display_message("No password found for the specified aim.", Fore.RED)
-    return None
-
-def edit_password(aim):
-    """Edit the password for a given aim in the CSV file."""
-    if not validate_aim(aim):
-        return
-    data = read_csv_file()
-    for row in data:
-        if aim == row["aim"]:
-            new_password = input("Enter the new password: ")
-            if new_password != input("Re-enter the new password: "):
-                display_message("Passwords do not match. Password update failed.", Fore.RED)
-                return
-            row["password"] = new_password
-            write_csv_file(data)
-            display_message(f"Password updated successfully.\nYour new password is {new_password}.")
-            return
-    display_message(f"No password found for '{aim}'.", Fore.RED)
-
-def del_password(aim):
-    """Delete a password entry for a given aim from the CSV file."""
-    if not validate_aim(aim):
-        return
-    data = read_csv_file()
-    new_data = [row for row in data if row["aim"] != aim]
-    if len(new_data) == len(data):
-        display_message(f"No password found for '{aim}'.", Fore.RED)
-        return
-    write_csv_file(new_data)
-    display_message(f"Password deleted successfully for aim: {aim}")
 
 def main():
     while True:
