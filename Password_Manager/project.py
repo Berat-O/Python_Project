@@ -5,48 +5,57 @@ import time
 import sqlite3
 import hashlib
 from colorama import Fore, Style
+from cryptography.fernet import Fernet
 
 STRING_LENGTH = 6
 PUNCTUATION_LENGTH = 4
 DB_FILE = "passwords.db"
+KEY_FILE = "master.key"
+
+def load_or_create_key():
+    if not os.path.exists(KEY_FILE):
+        key = Fernet.generate_key()
+        with open(KEY_FILE, "wb") as f:
+            f.write(key)
+    else:
+        with open(KEY_FILE, "rb") as f:
+            key = f.read()
+    return key
 
 def get_db_connection():
     conn = sqlite3.connect(DB_FILE)
     conn.execute('''
         CREATE TABLE IF NOT EXISTS passwords (
             aim TEXT PRIMARY KEY,
-            password_hash TEXT NOT NULL
+            password_encrypted TEXT NOT NULL
         )
     ''')
     return conn
 
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+def encrypt_password(password, fernet):
+    return fernet.encrypt(password.encode()).decode()
+
+def decrypt_password(token, fernet):
+    return fernet.decrypt(token.encode()).decode()
+
+def write_db(aim, password_encrypted):
+    conn = get_db_connection()
+    conn.execute("INSERT INTO passwords (aim, password_encrypted) VALUES (?, ?)", (aim, password_encrypted))
+    conn.commit()
+    conn.close()
+
+def update_db(aim, password_encrypted):
+    conn = get_db_connection()
+    conn.execute("UPDATE passwords SET password_encrypted = ? WHERE aim = ?", (password_encrypted, aim))
+    conn.commit()
+    conn.close()
 
 def read_db():
     conn = get_db_connection()
-    cursor = conn.execute("SELECT aim, password_hash FROM passwords")
+    cursor = conn.execute("SELECT aim, password_encrypted FROM passwords")
     data = [{"aim": row[0], "password": row[1]} for row in cursor.fetchall()]
     conn.close()
     return data
-
-def write_db(aim, password_hash):
-    conn = get_db_connection()
-    conn.execute("INSERT INTO passwords (aim, password_hash) VALUES (?, ?)", (aim, password_hash))
-    conn.commit()
-    conn.close()
-
-def update_db(aim, password_hash):
-    conn = get_db_connection()
-    conn.execute("UPDATE passwords SET password_hash = ? WHERE aim = ?", (password_hash, aim))
-    conn.commit()
-    conn.close()
-
-def delete_db(aim):
-    conn = get_db_connection()
-    conn.execute("DELETE FROM passwords WHERE aim = ?", (aim,))
-    conn.commit()
-    conn.close()
 
 def password_generator():
     char_sets = [string.ascii_lowercase, string.ascii_uppercase, string.punctuation, string.digits]
@@ -59,7 +68,7 @@ def display_message(message, color=Fore.GREEN):
     print(color + message + Style.RESET_ALL)
     time.sleep(2)
 
-def create_password(aim):
+def create_password(aim, fernet):
     if not validate_aim(aim):
         return
     data = read_db()
@@ -67,24 +76,25 @@ def create_password(aim):
         display_message(f"'{aim}' is unavailable. Please use a different aim.", Fore.RED)
         return
     password = password_generator()
-    password_hash = hash_password(password)
-    write_db(aim, password_hash)
+    password_encrypted = encrypt_password(password, fernet)
+    write_db(aim, password_encrypted)
     display_message(f"Password created successfully.\n{aim} password is: {password}")
 
-def check_password(aim):
+def check_password(aim, fernet):
     if not validate_aim(aim):
         return None
     conn = get_db_connection()
-    cursor = conn.execute("SELECT password_hash FROM passwords WHERE aim = ?", (aim,))
+    cursor = conn.execute("SELECT password_encrypted FROM passwords WHERE aim = ?", (aim,))
     row = cursor.fetchone()
     conn.close()
     if row:
-        display_message("Password hash is: " + row[0])
-        return row[0]
+        password = decrypt_password(row[0], fernet)
+        display_message("Password is: " + password)
+        return password
     display_message("No password found for the specified aim.", Fore.RED)
     return None
 
-def edit_password(aim):
+def edit_password(aim, fernet):
     if not validate_aim(aim):
         return
     conn = get_db_connection()
@@ -98,8 +108,8 @@ def edit_password(aim):
         display_message("Passwords do not match. Password update failed.", Fore.RED)
         conn.close()
         return
-    password_hash = hash_password(new_password)
-    update_db(aim, password_hash)
+    password_encrypted = encrypt_password(new_password, fernet)
+    update_db(aim, password_encrypted)
     display_message(f"Password updated successfully.\nYour new password is {new_password}.")
     conn.close()
 
@@ -137,6 +147,8 @@ def validate_aim(aim):
     return True
 
 def main():
+    key = load_or_create_key()
+    fernet = Fernet(key)
     while True:
         os.system('clear')
         selected = main_menu()
@@ -145,15 +157,15 @@ def main():
             break
         if selected in "1234":
             os.system('clear')
-            aim = input("Enter aim: ")
+            aim = input("Enter aim (program, website, etc.): ")
             if selected == "1":
-                create_password(aim)
+                create_password(aim, fernet)
             elif selected == "2":
-                password = check_password(aim)
+                password = check_password(aim, fernet)
                 if password:
                     display_message(f"Password is: {password}")
             elif selected == "3":
-                edit_password(aim)
+                edit_password(aim, fernet)
             elif selected == "4":
                 del_password(aim)
         else:

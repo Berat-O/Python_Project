@@ -1,57 +1,190 @@
- # Password Manager
+# 🔐 Password Manager - Documentation
 
-#### Description:
+This is a command-line based **Password Manager** written in Python. It allows you to securely generate, store, retrieve, edit, and delete passwords for different "aims" (e.g., websites, applications, services). Passwords are encrypted using a symmetric key with the help of the `cryptography` library.
 
-This is a simple command-line password manager app written in Python. It allows you to create, check, edit, and delete passwords associated with specific aims (e.g., program names, websites) and stores them in a CSV file.
+---
 
-# Getting Started
+## 🧠 Features
 
-To use this password manager, follow these steps:
+- ✅ Generate strong, random passwords
+- 🔐 Encrypt passwords using Fernet symmetric encryption
+- 🧾 Store passwords in a local SQLite database
+- 🔍 Retrieve and view stored passwords
+- ✏️ Update existing passwords
+- ❌ Delete passwords when no longer needed
+- 🗝️ Use a persistent master key stored in `master.key`
 
-1. Clone or download this repository to your local machine.
-2. Make sure you have Python 3.x installed.
-3. Install the required libraries by running the following command in your terminal or command prompt:
-    ```bash
-    pip install colorama
-4. Run the password_manager.py script:
-    ```bash
-    python password_manager.py
+---
 
-# Usage
+## 🗂️ File Structure
 
-The Password Manager App provides the following options:
+| File         | Purpose                                                |
+|--------------|--------------------------------------------------------|
+| `passwords.db` | Stores encrypted passwords in SQLite                 |
+| `master.key`   | Contains the symmetric encryption key (Fernet)       |
+| main script    | Contains all password manager logic and UI           |
 
-**Create Password:** Allows you to generate and save a new password for a specific aim (e.g., program or website).
-**Check Password:** Allows you to check and display a password associated with a specific aim.
-**Edit Password:** Allows you to change the password for a specific aim.
-**Delete Password:** Allows you to delete a password entry for a specific aim.
-**Exit:** Allows you to exit the Password Manager App.
+---
 
-# Creating a Password
-To create a password for a specific aim, choose option 1, and then enter the aim (e.g., program or website) for which you want to create a password. The app will generate a random password for you and display it. Make sure to save this password in a safe place since it will not be retrievable again.
+## 🔐 Master Key (`master.key`)
 
-# Checking a Password
-To check a password associated with a specific aim, choose option 2, and then enter the aim. The app will display the password if it exists in the database.
+The program uses a **master encryption key** to protect your passwords. This key is created or loaded at runtime and stored in a file named `master.key`.
 
-# Editing a Password
-To change the password associated with a specific aim, choose option 3, and then enter the aim. You will be prompted to enter a new password, and it will be updated in the database.
+### How it works:
 
-# Deleting a Password
-To delete a password entry for a specific aim, choose option 4, and then enter the aim. The password associated with that aim will be deleted from the database.
+```python
+def load_or_create_key():
+    if not os.path.exists(KEY_FILE):
+        key = Fernet.generate_key()
+        with open(KEY_FILE, "wb") as f:
+            f.write(key)
+    else:
+        with open(KEY_FILE, "rb") as f:
+            key = f.read()
+    return key
+```
 
-# Exiting the App
-To exit the Password Manager App, choose option 5.
+- If `master.key` does not exist, a new key is generated and saved.
+- If it exists, it's read from disk.
+- The key is then used by the `Fernet` object for encryption/decryption.
 
-# CSV File
+> ⚠️ **If `master.key` is deleted or modified, all stored passwords will become unreadable.**
 
-The app stores password information in a CSV file named password.csv in the same directory as the script. You can manually edit this file if needed.
+---
 
-# Security Notice
+## 🔧 Core Functions
 
-This Password Manager App is a simple utility for managing passwords and does not provide advanced security features. It's essential to keep the CSV file containing passwords secure, as it is not encrypted.
+### Password Generation
 
+```python
+def password_generator():
+    ...
+```
 
+- Uses a mix of lowercase, uppercase, digits, and punctuation
+- Random and strong: ensures complexity and uniqueness
 
+---
 
+### Create Password
 
+```python
+def create_password(aim, fernet):
+    ...
+```
 
+- Validates the aim
+- Checks if the aim already exists
+- Generates and encrypts a password
+- Saves it to the database
+
+---
+
+### Retrieve Password
+
+```python
+def check_password(aim, fernet):
+    ...
+```
+
+- Finds the encrypted password for the aim
+- Decrypts and returns it using Fernet
+
+---
+
+### Edit Password
+
+```python
+def edit_password(aim, fernet):
+    ...
+```
+
+- Confirms aim exists
+- Prompts for a new password
+- Updates the database with the new encrypted password
+
+---
+
+### Delete Password
+
+```python
+def del_password(aim):
+    ...
+```
+
+- Checks if the aim exists
+- Deletes it from the database
+
+---
+
+## 🧾 Database Structure
+
+The database (`passwords.db`) uses SQLite and contains a single table:
+
+```sql
+CREATE TABLE IF NOT EXISTS passwords (
+    aim TEXT PRIMARY KEY,
+    password_encrypted TEXT NOT NULL
+)
+```
+
+- `aim`: A string identifier (e.g., website name)
+- `password_encrypted`: The password encrypted with Fernet
+
+---
+
+## 🎨 Terminal Output
+
+- Uses `colorama` to color output messages for better readability
+- Displays error/success/status messages in red, green, etc.
+
+---
+
+## 🛡️ Security Best Practices
+
+| Aspect         | Recommendation                                                  |
+|----------------|-----------------------------------------------------------------|
+| `master.key`   | Keep this file private and secure                               |
+| Backup         | Back up `master.key` securely — losing it means lost access     |
+| Access         | Do not share or expose the folder where the app runs            |
+| Terminal use   | Run only on trusted systems to avoid keylogging or tampering    |
+
+---
+
+## ✅ Summary
+
+| Component        | Role                                                   |
+|------------------|--------------------------------------------------------|
+| `master.key`     | Stores symmetric encryption key used by `Fernet`       |
+| `passwords.db`   | Stores encrypted passwords with their associated aims  |
+| `Fernet`         | Handles encryption and decryption                      |
+| `colorama`       | Enhances readability of terminal messages              |
+| SQLite           | Lightweight embedded database for storing credentials  |
+
+> 🧠 Treat `master.key` as your vault's real key. If lost or exposed, your data is at risk.
+
+---
+
+## 🚀 How to Use
+
+1. Run the script: `python your_script.py`
+2. Choose an option from the menu:
+   - Create, check, edit, or delete a password
+3. Enter an "aim" (e.g., `github`, `email`, `netflix`)
+4. Follow the instructions shown in the terminal
+
+Passwords are encrypted, securely stored, and only accessible with the same `master.key`.
+
+```bash
+---------------------|
+Password Manager App |
+---------------------|
+1. Create password   |
+2. Check password    |
+3. Edit password     |
+4. Delete password   |
+5. Exit              |
+---------------------|
+```
+
+Enjoy secure, local password management!
