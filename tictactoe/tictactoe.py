@@ -92,10 +92,8 @@ def terminal(board):
     
     #Changed elif statement to a single if statement
     if winner(board) == X:
-        print(winner(board))
         return True
     elif winner(board) == O:
-        print(winner(board))
         return True
 
     for i in range(3):
