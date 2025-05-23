@@ -68,7 +68,6 @@ def winner(board):
     
     lines = []
 
-    # Changed the entire winner function to a single loop
     # to check for all possible winning combinations
     # Rows, Columns and Diagonals
     
@@ -90,7 +89,7 @@ def terminal(board):
     Returns True if game is over, False otherwise.
     """
     
-    #Changed elif statement to a single if statement
+    
     if winner(board) == X:
         return True
     elif winner(board) == O:
@@ -126,7 +125,6 @@ def minimax(board):
     if terminal(board):
         return None
 
-    #Changed
     #Check if the board is empty to make sure the AI always plays bottom right (which it does anyways)
     if all(cell is None for row in board for cell in row):
         return (2, 2)
