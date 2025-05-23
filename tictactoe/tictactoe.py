@@ -68,7 +68,7 @@ def winner(board):
     
     lines = []
 
-    # to check for all possible winning combinations
+    # Check for all possible winning combinations
     # Rows, Columns and Diagonals
     
     for i in range(3):
@@ -107,7 +107,6 @@ def utility(board):
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
     
-    #removed repetition of winner function
     w = winner(board)
     if w == X:
         return 1
