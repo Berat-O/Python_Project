@@ -23,9 +23,9 @@ def player(board):
     count = [0, 0]
     for i in range(3):
         for j in range(3):
-            if board[i][j] == "X":
+            if board[i][j] == X:
                 count[0] = count[0] + 1
-            elif board[i][j] == "O":
+            elif board[i][j] == O:
                 count[1] = count[1] + 1
 
     if count[0] > count[1]:
@@ -65,56 +65,23 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
+    
+    lines = []
+
+    # Changed the entire winner function to a single loop
+    # to check for all possible winning combinations
+    # Rows, Columns and Diagonals
+    
     for i in range(3):
-        if (
-            board[i][0] == board[i][1]
-            and board[i][0] == board[i][2]
-            and board[i][0] != None
-        ):
-            if board[i][0] == "X":
-                return X
-            elif board[i][0] == "O":
-                return O
-            else:
-                return None
-
-    for i in range(3):
-        if (
-            board[0][i] == board[1][i]
-            and board[1][i] == board[2][i]
-            and board[0][i] != None
-        ):
-            if board[0][i] == "X":
-                return X
-            elif board[0][i] == "O":
-                return O
-            else:
-                return None
-
-    if (
-        board[0][0] == board[1][1]
-        and board[1][1] == board[2][2]
-        and board[0][0] != None
-    ):
-        if board[0][0] == "X":
-            return X
-        elif board[0][0] == "O":
-            return O
-        else:
-            return None
-
-    if (
-        board[2][0] == board[1][1]
-        and board[1][1] == board[0][2]
-        and board[2][0] != None
-    ):
-        if board[2][0] == "X":
-            return X
-        elif board[2][0] == "O":
-            return O
-        else:
-            return None
-
+        lines.append(board[i]) #Rows
+        lines.append([board[0][i], board[1][i], board[2][i]]) #Columns
+    lines.append([board[0][0], board[1][1], board[2][2]]) #Diagonal
+    lines.append([board[2][0], board[1][1], board[0][2]]) #Diagonal
+    
+    # Check if any line has all three elements the same and checks what they are
+    for line in lines:
+        if line[0] is not None and line.count(line[0]) == 3:
+            return line[0]
     return None
 
 
@@ -122,9 +89,13 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board) == "X":
+    
+    #Changed elif statement to a single if statement
+    if winner(board) == X:
+        print(winner(board))
         return True
-    elif winner(board) == "O":
+    elif winner(board) == O:
+        print(winner(board))
         return True
 
     for i in range(3):
@@ -138,9 +109,12 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    if winner(board) == "X":
+    
+    #removed repetition of winner function
+    w = winner(board)
+    if w == X:
         return 1
-    elif winner(board) == "O":
+    elif w == O:
         return -1
     else:
         return 0
@@ -154,6 +128,11 @@ def minimax(board):
     if terminal(board):
         return None
 
+    #Changed
+    #Check if the board is empty to make sure the AI always plays bottom right (which it does anyways)
+    if all(cell is None for row in board for cell in row):
+        return (2, 2)
+    
     # If X's turn
     elif player(board) == X:
         options = []
