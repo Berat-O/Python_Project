@@ -65,56 +65,24 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    for i in range(3):
-        if (
-            board[i][0] == board[i][1]
-            and board[i][0] == board[i][2]
-            and board[i][0] != None
-        ):
-            if board[i][0] == "X":
-                return X
-            elif board[i][0] == "O":
-                return O
-            else:
-                return None
+    win_combos = [
+        # Rows
+        [(0,0), (0,1), (0,2)],
+        [(1,0), (1,1), (1,2)],
+        [(2,0), (2,1), (2,2)],
+        # Columns
+        [(0,0), (1,0), (2,0)],
+        [(0,1), (1,1), (2,1)],
+        [(0,2), (1,2), (2,2)],
+        # Diagonals
+        [(0,0), (1,1), (2,2)],
+        [(0,2), (1,1), (2,0)],
+    ]
 
-    for i in range(3):
-        if (
-            board[0][i] == board[1][i]
-            and board[1][i] == board[2][i]
-            and board[0][i] != None
-        ):
-            if board[0][i] == "X":
-                return X
-            elif board[0][i] == "O":
-                return O
-            else:
-                return None
-
-    if (
-        board[0][0] == board[1][1]
-        and board[1][1] == board[2][2]
-        and board[0][0] != None
-    ):
-        if board[0][0] == "X":
-            return X
-        elif board[0][0] == "O":
-            return O
-        else:
-            return None
-
-    if (
-        board[2][0] == board[1][1]
-        and board[1][1] == board[0][2]
-        and board[2][0] != None
-    ):
-        if board[2][0] == "X":
-            return X
-        elif board[2][0] == "O":
-            return O
-        else:
-            return None
-
+    for combo in win_combos:
+        a, b, c = combo
+        if board[a[0]][a[1]] == board[b[0]][b[1]] == board[c[0]][c[1]] != None:
+            return board[a[0]][a[1]]
     return None
 
 
