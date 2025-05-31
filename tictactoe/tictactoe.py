@@ -23,9 +23,9 @@ def player(board):
     count = [0, 0]
     for i in range(3):
         for j in range(3):
-            if board[i][j] == "X":
+            if board[i][j] == X:
                 count[0] = count[0] + 1
-            elif board[i][j] == "O":
+            elif board[i][j] == O:
                 count[1] = count[1] + 1
 
     if count[0] > count[1]:
@@ -58,7 +58,8 @@ def result(board, action):
         copy_board[action[0]][action[1]] = a
         return copy_board
     else:
-        raise "eror"
+        raise ValueError("Invalid action: Cell already occupied.")
+
 
 
 def winner(board):
@@ -71,9 +72,9 @@ def winner(board):
             and board[i][0] == board[i][2]
             and board[i][0] != None
         ):
-            if board[i][0] == "X":
+            if board[i][0] == X:
                 return X
-            elif board[i][0] == "O":
+            elif board[i][0] == O:
                 return O
             else:
                 return None
@@ -84,9 +85,9 @@ def winner(board):
             and board[1][i] == board[2][i]
             and board[0][i] != None
         ):
-            if board[0][i] == "X":
+            if board[0][i] == X:
                 return X
-            elif board[0][i] == "O":
+            elif board[0][i] == O:
                 return O
             else:
                 return None
@@ -96,9 +97,9 @@ def winner(board):
         and board[1][1] == board[2][2]
         and board[0][0] != None
     ):
-        if board[0][0] == "X":
+        if board[0][0] == X:
             return X
-        elif board[0][0] == "O":
+        elif board[0][0] == O:
             return O
         else:
             return None
@@ -108,9 +109,9 @@ def winner(board):
         and board[1][1] == board[0][2]
         and board[2][0] != None
     ):
-        if board[2][0] == "X":
+        if board[2][0] == X:
             return X
-        elif board[2][0] == "O":
+        elif board[2][0] == O:
             return O
         else:
             return None
@@ -122,9 +123,7 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board) == "X":
-        return True
-    elif winner(board) == "O":
+    if winner(board) in [X, O]:
         return True
 
     for i in range(3):
@@ -138,9 +137,9 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    if winner(board) == "X":
+    if winner(board) == X:
         return 1
-    elif winner(board) == "O":
+    elif winner(board) == O:
         return -1
     else:
         return 0
