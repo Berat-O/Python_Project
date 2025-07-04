@@ -29,16 +29,13 @@ while True:
 
     screen.fill(black)
 
-    # Let user choose a player.
     if user is None:
 
-        # Draw title
         title = largeFont.render("Play Tic-Tac-Toe", True, white)
         titleRect = title.get_rect()
         titleRect.center = ((width / 2), 50)
         screen.blit(title, titleRect)
 
-        # Draw buttons
         playXButton = pygame.Rect((width / 8), (height / 2), width / 4, 50)
         playX = mediumFont.render("Play as X", True, black)
         playXRect = playX.get_rect()
@@ -53,7 +50,6 @@ while True:
         pygame.draw.rect(screen, white, playOButton)
         screen.blit(playO, playORect)
 
-        # Check if button is clicked
         click, _, _ = pygame.mouse.get_pressed()
         if click == 1:
             mouse = pygame.mouse.get_pos()
@@ -66,7 +62,6 @@ while True:
 
     else:
 
-        # Draw game board
         tile_size = 80
         tile_origin = (width / 2 - (1.5 * tile_size),
                        height / 2 - (1.5 * tile_size))
@@ -92,7 +87,6 @@ while True:
         game_over = ttt.terminal(board)
         player = ttt.player(board)
 
-        # Show title
         if game_over:
             winner = ttt.winner(board)
             if winner is None:
@@ -108,7 +102,6 @@ while True:
         titleRect.center = ((width / 2), 30)
         screen.blit(title, titleRect)
 
-        # Check for AI move
         if user != player and not game_over:
             if ai_turn:
                 time.sleep(0.5)
@@ -118,7 +111,6 @@ while True:
             else:
                 ai_turn = True
 
-        # Check for a user move
         click, _, _ = pygame.mouse.get_pressed()
         if click == 1 and user == player and not game_over:
             mouse = pygame.mouse.get_pos()
@@ -128,11 +120,16 @@ while True:
                         board = ttt.result(board, (i, j))
 
         if game_over:
+            mouse_pos = pygame.mouse.get_pos()
             againButton = pygame.Rect(width / 3, height - 65, width / 3, 50)
+            if againButton.collidepoint(mouse_pos):
+                button_color = (200, 200, 200)  # Lighter gray when hovered
+            else:
+                button_color = white
             again = mediumFont.render("Play Again", True, black)
             againRect = again.get_rect()
             againRect.center = againButton.center
-            pygame.draw.rect(screen, white, againButton)
+            pygame.draw.rect(screen, button_color, againButton)
             screen.blit(again, againRect)
             click, _, _ = pygame.mouse.get_pressed()
             if click == 1:
