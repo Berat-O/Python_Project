@@ -4,29 +4,35 @@ import time
 
 import tictactoe as ttt
 
+# Initialize pygame
 pygame.init()
+#Define Colors
 size = width, height = 600, 400
 
 # Colors
 black = (0, 0, 0)
 white = (255, 255, 255)
 
+# Create the game window
 screen = pygame.display.set_mode(size)
 
+# Set up fonts
 mediumFont = pygame.font.Font("OpenSans-Regular.ttf", 28)
 largeFont = pygame.font.Font("OpenSans-Regular.ttf", 40)
 moveFont = pygame.font.Font("OpenSans-Regular.ttf", 60)
 
+# Initial game state
 user = None
 board = ttt.initial_state()
 ai_turn = False
 
+# Game loop
 while True:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-
+    # Fill screen with black color
     screen.fill(black)
 
     # Let user choose a player.
@@ -38,14 +44,15 @@ while True:
         titleRect.center = ((width / 2), 50)
         screen.blit(title, titleRect)
 
-        # Draw buttons
+        # Draw "Play as X" button
         playXButton = pygame.Rect((width / 8), (height / 2), width / 4, 50)
         playX = mediumFont.render("Play as X", True, black)
         playXRect = playX.get_rect()
         playXRect.center = playXButton.center
         pygame.draw.rect(screen, white, playXButton)
         screen.blit(playX, playXRect)
-
+        
+        # Draw "Play as O" button
         playOButton = pygame.Rect(5 * (width / 8), (height / 2), width / 4, 50)
         playO = mediumFont.render("Play as O", True, black)
         playORect = playO.get_rect()
