@@ -1,57 +1,36 @@
-from numpy import zeros,array, eye, copy, dot
+import numpy as np
 
-def Gauss(A,b):
-    size = len(A)
-    A = array(A)
-    P = eye(size) 
-    for i in range(size-1):
-        maxRow = i
-        for j in range(i+1,size):
-            if abs(A[j][i]) > abs(A[maxRow][i]):
-                maxRow = j
-        if maxRow != i:
-            #### Swap
-            P[[maxRow,i]] = P[[i, maxRow]]
-            A[[maxRow,i]] = A[[i, maxRow]]
-        for k in range(i+1, size):
-            A[k][i] /= A[i][i]
-            for j in range(i+1, size):
-                A[k][j] -= A[k][i]*A[i][j]
-
-    L = eye(size)
-    for i in range(size):
-        for j in range(i):
-            L[i][j] = A[i][j]
-
-    U = zeros((size,size))
-    for i in range(size):
-        for j in range(i,size):
-            U[i][j] = A[i][j]
-
-    b = array(b)
-
-    y = copy(dot(P,b))
-
-    # forwards
-    for i in range(size):
-        if L[i][i] == 0: #Division by 0
-            y[i] = 0
-            continue
-        for j in range(i):
-            y[i] = (y[i] - L[i][j]*y[j])/L[i][i]
-
+def gauss_elimination(A, b):
+    A = np.asarray(A, dtype=float)
+    b = np.asarray(b, dtype=float)
     
-    x = zeros((size,1))
-    x[size-1] = y[size-1]/U[size-1][size-1]
-
-    for i in range(size-1,-1,-1):
-        if U[i][i] == 0: #Division by 0
-            x[i] = 0
-            continue
-        xv = y[i]
-        for j in range(i+1,size):
-            xv -= U[i][j]*x[j]
-        xv /= U[i][i]
-        x[i] = xv
-
+    if A.ndim != 2 or A.shape[0] != A.shape[1]:
+        raise ValueError("Coefficient matrix A must be square")
+    
+    n = A.shape[0]
+    
+    if b.ndim != 1 or len(b) != n:
+        raise ValueError("Right-hand side vector b must have same length as rows of A")
+    
+    augmented = np.column_stack((A, b))
+    
+    for i in range(n):
+        max_row = np.argmax(np.abs(augmented[i:, i])) + i
+        if max_row != i:
+            augmented[[i, max_row]] = augmented[[max_row, i]]
+        
+        pivot = augmented[i, i]
+        if np.abs(pivot) < 1e-10:
+            raise ValueError("Matrix is nearly singular, cannot solve using Gaussian elimination")
+        
+        augmented[i, i:] /= pivot
+        
+        for j in range(i+1, n):
+            factor = augmented[j, i]
+            augmented[j, i:] -= factor * augmented[i, i:]
+    
+    x = np.zeros(n)
+    for i in range(n-1, -1, -1):
+        x[i] = augmented[i, -1] - np.sum(augmented[i, i+1:-1] * x[i+1:])
+    
     return x
