@@ -1,37 +1,46 @@
 import matplotlib.pyplot as plt
 
-x1 = int(input("Please type x1 value :"))
-y1 = int(input("Please type y1 value :"))
-x2 = int(input("Please type x2 value :"))
-y2 = int(input("Please type y2 value :"))
+def get_coordinate(prompt):
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Invalid input. Please enter an integer.")
 
-# Develop the equation y = mx + b
-m = (y2 - y1) / (x2 - x1)
-b = y1 - m*x1
-equation = f'y = {m}x + {b}'
+def calculate_line_parameters(x1, y1, x2, y2):
+    if x1 == x2:
+        return None, x1  # Vertical line x = x1
+    m = (y2 - y1) / (x2 - x1)
+    b = y1 - m * x1
+    return m, b
 
-# For the graph
-xmin = -10
-xmax = 10
-ymin = -10
-ymax = 10
+def plot_line_and_points(x1, y1, x2, y2, m, b):
+    xmin, xmax = -10, 10
+    ymin, ymax = -10, 10
 
-# For the line on the graph
-y3 = m*xmin + b 
-y4 = m*xmax + b 
+    fig, ax = plt.subplots()
+    plt.axis([xmin, xmax, ymin, ymax])
+    plt.plot([xmin, xmax], [0, 0], 'b')
+    plt.plot([0, 0], [ymin, ymax], 'b')
 
-# Basic setup for the graph
-fig, ax = plt.subplots()
-plt.axis([xmin,xmax,ymin,ymax]) # window size
-plt.plot([xmin,xmax],[0,0],'b') # blue x axis
-plt.plot([0,0],[ymin,ymax], 'b') # blue y axis
+    if m is None:
+        equation = f'x = {b}'
+        plt.axvline(x=b, color='r', label=equation)
+    else:
+        equation = f'y = {m}x + {b}'
+        y3 = m * xmin + b
+        y4 = m * xmax + b
+        plt.plot([xmin, xmax], [y3, y4], 'r', label=equation)
 
+    plt.scatter([x1, x2], [y1, y2], color='green', marker='o', 
+                label=f'Points ({x1}, {y1}), ({x2}, {y2})')
+    plt.legend()
+    plt.show()
 
-# Plot the linear function as a red line
-plt.plot([xmin,xmax],[y3,y4],'r',label=equation)
-plt.scatter([x1, x2], [y1, y2], color='green', marker='o', label=f'Points ({x1}, {y1}), ({x2}, {y2})')
+x1 = get_coordinate("Please enter x1 value: ")
+y1 = get_coordinate("Please enter y1 value: ")
+x2 = get_coordinate("Please enter x2 value: ")
+y2 = get_coordinate("Please enter y2 value: ")
 
-
-
-plt.legend()
-plt.show()
+m, b = calculate_line_parameters(x1, y1, x2, y2)
+plot_line_and_points(x1, y1, x2, y2, m, b)
