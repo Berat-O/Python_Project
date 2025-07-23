@@ -2,7 +2,7 @@
 
 This project implements a simple game of Tic-Tac-Toe using the Pygame library. You can play against an AI opponent that makes optimal moves using the minimax algorithm.
 
-## 📸 Screenshot
+## 📸 Preview
 
 ![Tic-Tac-Toe Screenshot](screenshot.png)
 
