@@ -1,0 +1,34 @@
+[project]
+name = "password-manager"
+version = "0.1.0"
+description = "Simply password manager"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "rich>=14.1.0",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["."]
+exclude = ["migrations", ".venv", "__pycache__"]
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "ANN", "ASYNC", "I"]
+ignore = ["E501", "E701"]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "native"
+docstring-code-format = true
+skip-magic-trailing-comma = false
+
+[tool.taskipy.tasks]
+lint = "ruff check --no-cache --fix ."
+format = "ruff format --no-cache ."
+precommit = "task format && task lint"
+clean = "cleaner -u python --delete"

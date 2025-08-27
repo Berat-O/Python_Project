@@ -12,10 +12,10 @@ To use this password manager, follow these steps:
 2. Make sure you have Python 3.x installed.
 3. Install the required libraries by running the following command in your terminal or command prompt:
     ```bash
-    pip install colorama
+    pip install rich
 4. Run the password_manager.py script:
     ```bash
-    python password_manager.py
+    python main.py
 
 # Usage
 
