@@ -1,5 +1,1 @@
-random
-string
-csv
-os
-colorama
+rich
