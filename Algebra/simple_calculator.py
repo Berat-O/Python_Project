@@ -1,185 +1,149 @@
 import math
-from sympy import symbols, solve, sqrt
+from sympy import symbols, solve as sympy_solve, sqrt
 from fractions import Fraction
 import sys
 
-def main():
-   
-   while True:
+# Helper Functions
 
-    main_menu()
-    choice = input("Enter your choice (1-12): ")
+def get_int(prompt):
+    """Safely get an integer input."""
+    try:
+        return int(input(prompt))
+    except ValueError:
+        print("Invalid input. Please enter an integer.")
+        return None
 
-    if choice == '1':
-      perform_operation(add)
-    elif choice == '2':
-      perform_operation(subtract)
-    elif choice == '3':
-      perform_operation(multiply)
-    elif choice == '4':
-      perform_operation(divide)
-    elif choice == '5':
-      perform_operation(prime_number)
-    elif choice == '6':
-      perform_operation(prime_factor)
-    elif choice == '7':
-      perform_operation(square_root)
-    elif choice == '8':
-      perform_operation(solve)
-    elif choice == '9':
-      perform_operation(convert_decimals_to)
-    elif choice == '10':
-      perform_operation(convert_fractions_to)
-    elif choice == '11':
-      perform_operation(convert_percents_to)
-    elif choice == '12':
-      print("Goodbye!")
-      break
-    else:
-      print("Invalid choice. Please choose a valid option (1-12).")
-   
+def get_float(prompt):
+    """Safely get a float input."""
+    try:
+        return float(input(prompt))
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+        return None
 
-
-  
-
+# Math Operations
 
 def add():
-  try:
-    a = int(input('Enter an integer: '))
-    b = int(input('Enter an integer: '))
-    print(f"a+b = {a+b}")
-  except ValueError:
-    print("Invalid input. Please enter integers only.")
+    a, b = get_int("Enter first integer: "), get_int("Enter second integer: ")
+    if a is not None and b is not None:
+        print(f"Result: {a + b}")
 
 def subtract():
-  try:
-    a = int(input('Enter an integer: '))
-    b = int(input('Enter an integer: '))
-    print(f"a-b = {a-b}")
-  except ValueError:
-    print("Invalid input. Please enter integers only.")
+    a, b = get_int("Enter first integer: "), get_int("Enter second integer: ")
+    if a is not None and b is not None:
+        print(f"Result: {a - b}")
 
 def multiply():
-  try:
-    a = int(input('Enter an integer: '))
-    b = int(input('Enter an integer: '))
-    print(f"a*b = {a*b}")
-  except ValueError:
-    print("Invalid input. Please enter integers only.")
+    a, b = get_int("Enter first integer: "), get_int("Enter second integer: ")
+    if a is not None and b is not None:
+        print(f"Result: {a * b}")
 
 def divide():
-  try:
-    a = int(input('Enter an integer: '))
-    b = int(input('Enter an integer: '))
-    if b == 0:
-      print("Cannot divide by zero!")
-    else:
-      print(f"a/b = {a/b}")
-  except ValueError:
-      print("Invalid input. Please enter integers only.")
-def prime_number():
-  try:
-    number = int(input("Enter a positive integer: "))
-    if number <= 0:
-        print("Invalid input. Please enter a positive integer.")
+    a, b = get_int("Enter dividend: "), get_int("Enter divisor: ")
+    if a is not None and b is not None:
+        if b == 0:
+            print("Error: Cannot divide by zero.")
+        else:
+            print(f"Result: {a / b}")
+
+def check_prime():
+    num = get_int("Enter a positive integer: ")
+    if num is None or num <= 0:
+        print("Please enter a positive integer.")
         return
-    is_prime = all(number % i != 0 for i in range(2, number))
-    print("prime" if is_prime else "composite")
-  except ValueError:
-    print("Invalid input. Please enter a positive integer.")
+    is_prime = all(num % i != 0 for i in range(2, int(math.sqrt(num)) + 1))
+    print("Prime" if is_prime else "Composite")
 
-def prime_factor():
-  try:
-    number = int(input('Enter an integer: '))
-    if number <= 0:
-        print("Invalid input. Please enter a positive integer.")
+def prime_factors():
+    num = get_int("Enter a positive integer: ")
+    if num is None or num <= 0:
+        print("Please enter a positive integer.")
         return
-    factors = [i for i in range(1, number + 1) if number % i == 0]
-    print(factors)
-  except ValueError:
-    print("Invalid input. Please enter a positive integer.")
+    factors = [i for i in range(1, num + 1) if num % i == 0]
+    print(f"Prime factors of {num}: {factors}")
 
-def square_root():
-  try:
-    n = int(input('Without the radical, enter a square root to factor: '))
-    if n <= 0:
-        print("Invalid input. Please enter a positive integer.")
+def square_root_factorization():
+    n = get_int("Enter a number under the radical: ")
+    if n is None or n <= 0:
+        print("Please enter a positive integer.")
         return
-    max_factor = max(i**2 for i in range(1, math.isqrt(n) + 1) if n % (i**2) == 0)
-    other_factor = n // max_factor
-    square_root = int(math.sqrt(max_factor))
-    output = square_root * sqrt(other_factor)
-    print(output)
-  except ValueError:
-    print("Invalid input. Please enter a positive integer.")
+    max_square = max(i**2 for i in range(1, math.isqrt(n) + 1) if n % (i**2) == 0)
+    root_part = int(math.sqrt(max_square))
+    other_part = n // max_square
+    print(f"Simplified root: {root_part}√{other_part}")
 
-def solve():
-  try:
-    x = symbols('x')
-    eq = input('Enter an equation to solve for x: 0 = ')
-    solutions = solve(eq, x)
-    print(f"x = {solutions[0]}" if solutions else "No solutions found.")
-  except (ValueError, TypeError, IndexError):
-    print("Invalid equation or no solutions found.")
+def solve_equation():
+    try:
+        x = symbols('x')
+        eq = input("Enter an equation (e.g. x**2 - 4): ")
+        solutions = sympy_solve(eq, x)
+        print("Solutions:", solutions if solutions else "No solutions found.")
+    except Exception:
+        print("Invalid equation.")
 
-def convert_decimals_to():
-  try:
-    decimal = float(input("Enter a decimal number to convert: "))
-    fraction = Fraction(decimal).limit_denominator()
-    percent = decimal * 100
-    print(f"The decimal is {decimal}")
-    print(f"The fraction is {fraction}")
-    print(f"The percent is {percent}%")
-  except ValueError:
-    print("Invalid input. Please enter a valid decimal number.")
+# Conversion Functions
 
-def convert_fractions_to():
-  try:
-    fraction = input("Enter a fraction (numerator/denominator): ")
-    numerator, denominator = map(int, fraction.split("/"))
-    decimal = numerator / denominator
-    percent = decimal * 100
-    print(f"The decimal is {decimal}")
-    print(f"The percent is {percent}%")
-  except (ValueError, ZeroDivisionError):
-    print("Invalid input. Please enter a valid fraction.")
+def convert_decimal():
+    decimal = get_float("Enter a decimal number: ")
+    if decimal is None:
+        return
+    print(f"Fraction: {Fraction(decimal).limit_denominator()}")
+    print(f"Percent: {decimal * 100}%")
 
-def convert_percents_to():
-  try:
-    percent = float(input("Enter a percent: ").strip("%"))
+def convert_fraction():
+    try:
+        num, denom = map(int, input("Enter a fraction (num/den): ").split("/"))
+        decimal = num / denom
+        print(f"Decimal: {decimal}")
+        print(f"Percent: {decimal * 100}%")
+    except Exception:
+        print("Invalid fraction format or zero denominator.")
+
+def convert_percent():
+    percent = get_float("Enter percent value: ")
+    if percent is None:
+        return
     decimal = percent / 100
-    fraction = Fraction(decimal).limit_denominator()
-    print(f"The decimal is {decimal}")
-    print(f"The fraction is {fraction}")
-  except ValueError:
-    print("Invalid input. Please enter a valid percent.")
+    print(f"Decimal: {decimal}")
+    print(f"Fraction: {Fraction(decimal).limit_denominator()}")
 
-# Write your code here
-
-def perform_operation(operation_func):
-    operation_func()
-    if not continue_calculations():
-        sys.exit("Goodbye")
-
-def continue_calculations():
-    check = input("Do you want to continue calculations? (Y/N): ").upper()
-    return check != "N"
+# Menu and Program Flow
 
 def main_menu():
-    print("Menu:")
-    print("1. Add")
-    print("2. Subtract")
-    print("3. Multiply")
-    print("4. Divide")
-    print("5. Check if a Number is Prime")
-    print("6. Find Prime Factors")
-    print("7. Square Root Factorization")
-    print("8. Solve Equation for x")
-    print("9. Convert decimals to fractions and percents")
-    print("10. Convert fractions to decimals and percents")
-    print("11. Convert percents to decimals and fractions")
-    print("12. Exit")
+    menu = {
+        "1": ("Add", add),
+        "2": ("Subtract", subtract),
+        "3": ("Multiply", multiply),
+        "4": ("Divide", divide),
+        "5": ("Check Prime", check_prime),
+        "6": ("Prime Factors", prime_factors),
+        "7": ("Simplify Square Root", square_root_factorization),
+        "8": ("Solve Equation", solve_equation),
+        "9": ("Decimal to Fraction/Percent", convert_decimal),
+        "10": ("Fraction to Decimal/Percent", convert_fraction),
+        "11": ("Percent to Decimal/Fraction", convert_percent),
+        "12": ("Exit", None)
+    }
 
+    print("\n=== Calculator Menu ===")
+    for key, (label, _) in menu.items():
+        print(f"{key}. {label}")
 
-if __name__=='__main__':
+    choice = input("\nEnter your choice (1–12): ").strip()
+    if choice in menu:
+        if choice == "12":
+            sys.exit("Goodbye!")
+        else:
+            menu[choice][1]()
+    else:
+        print("Invalid choice. Please try again.")
+
+def main():
+    while True:
+        main_menu()
+        cont = input("\nContinue? (Y/N): ").strip().upper()
+        if cont == "N":
+            sys.exit("Goodbye!")
+
+if __name__ == "__main__":
     main()
