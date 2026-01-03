@@ -7,21 +7,21 @@ from fetch_stocks import StockFetcher
 from data_processor import DataProcessor
 from plot_stocks import StockPlotter
 
+
 class Main:
 
     def __init__(self):
-        # Assign Log message
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)  # Set the logger level to INFO
+        self.logger.setLevel(logging.INFO)
 
-        # Create handler
-        stream_handler = logging.StreamHandler(sys.stderr)  # Output logs to stderr
-        stream_handler.setLevel(logging.INFO)    # Set the log level to INFO
+        stream_handler = logging.StreamHandler(sys.stderr)
+        stream_handler.setLevel(logging.INFO)
 
-        stream_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')  # Define the format for log messages
-        stream_handler.setFormatter(stream_format)  # Assign the format to the stream handler
+        stream_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+        stream_handler.setFormatter(stream_format)
 
-        self.logger.addHandler(stream_handler)  # Add the stream handler to the logger
+        if not self.logger.handlers:
+            self.logger.addHandler(stream_handler)
 
         self.stock_loader = StockLoader()
         self.stock_fetcher = StockFetcher()
@@ -30,54 +30,87 @@ class Main:
 
     def main(self):
         """Main function to orchestrate the execution flow."""
-        self.logger.info('Session started')
-        sys.stderr.flush()  # Force output of stderr buffer
+        self.logger.info("Session started")
+        sys.stderr.flush()
 
-        filename = input("Enter the filename containing the list of stocks: ")
-        if not filename.endswith('.csv'):
-            filename += '.csv'
+        # ---- Filename input ----
+        filename = input("Enter the filename containing the list of stocks: ").strip()
+
+        if not filename:
+            print("Error: Filename cannot be empty.")
+            self.logger.error("Empty filename provided.")
+            return
+
+        if "." in filename and not filename.endswith(".csv"):
+            print("Error: Please provide a .csv file.")
+            self.logger.error(f"Invalid file extension: {filename}")
+            return
+
+        if not filename.endswith(".csv"):
+            filename += ".csv"
+
         path = os.path.join("data", filename)
 
-        sort_data = input("Sort data? (yes/no): ").lower() == 'yes'
+        # ---- Sorting preference ----
+        sort_data = input("Sort data? (yes/no): ").strip().lower() == "yes"
         successful_symbols = []
 
         try:
             stocks = self.stock_loader.load_stocks(path)
+
             if not stocks:
-                self.logger.info('No stocks loaded')
+                print("No stocks found in the provided file.")
+                self.logger.info("No stocks loaded.")
                 return
-            # Use multiprocessing to fetch data for multiple stocks concurrently
+
             with Pool() as pool:
                 data = pool.map(self.stock_fetcher.fetch_stock_data, stocks)
-            # Filter None values from data
+
             data = [stock_info for stock_info in data if stock_info is not None]
+
             if not data:
+                print("No valid stock data was fetched.")
                 self.logger.warning("No valid stock data was fetched.")
                 return
-            # Fill in the list of successful symbols
-            successful_symbols = [stock_info[1] for stock_info in data]
+
+            successful_symbols = [stock_info["symbol"] for stock_info in data]
 
             df = self.data_processor.display_data(data, sort=sort_data)
-            self.stock_plotter.plot_data(df, save_figure=True, figure_filename="stock_ratings.png")
+            self.stock_plotter.plot_data(
+                df,
+                save_figure=True,
+                figure_filename="stock_ratings.png"
+            )
+
         except FileNotFoundError:
-            # Handle missing file error
-            self.logger.error(f"File {filename} not found. Please check the filename and try again.")
+            print(f"Error: File '{filename}' not found.")
+            self.logger.error(f"File not found: {filename}")
+
         except ValueError as e:
-            # Handle invalid data format errors
-            self.logger.error(f"Invalid data format encountered: {e}")
+            print(f"Error: Invalid data format - {e}")
+            self.logger.error(f"Invalid data format: {e}")
+
         except Exception as e:
-            # Handle unexpected errors
-            self.logger.error(f"An error occurred: {e}", exc_info=True)
+            print(f"Unexpected error occurred: {e}")
+            self.logger.error("Unexpected error", exc_info=True)
+
         finally:
-            save_successful = input("Do you want to save successful symbols? (yes/no): ").lower() == 'yes'
+            save_successful = input("Do you want to save successful symbols? (yes/no): ").strip().lower() == "yes"
+
             if successful_symbols and save_successful:
-                output_filename = input("Enter the filename to save successful symbols: ")
-                if not output_filename.endswith('.csv'):
-                    output_filename += '.csv'
-                self.data_processor.save_successful_symbols(output_filename, successful_symbols)
+                output_filename = input("Enter the filename to save successful symbols: ").strip()
 
-        self.logger.info('Session stopped')  # Log that the session has stopped
+                if not output_filename.endswith(".csv"):
+                    output_filename += ".csv"
 
-if __name__ == '__main__':
+                self.data_processor.save_successful_symbols(
+                    output_filename,
+                    successful_symbols
+                )
+
+        self.logger.info("Session stopped")
+
+
+if __name__ == "__main__":
     app = Main()
     app.main()
