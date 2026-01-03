@@ -9,6 +9,7 @@ pygame.init()
 #Define Window Size
 size = width, height = 600, 400
 
+
 # Colors
 red = (255, 0, 0)
 blue = (0, 0, 255)
@@ -136,13 +137,27 @@ while True:
 
         if game_over:
             againButton = pygame.Rect(width / 3, height - 65, width / 3, 50)
-            again = mediumFont.render("Play Again", True, black)
+
+            # Get mouse position
+            mouse = pygame.mouse.get_pos()
+            hovering = againButton.collidepoint(mouse)
+
+            # Hover effect: use a different color if mouse is over the button
+            button_color = (30, 41, 59) if hovering else (255, 255, 255)  # dark blue if hover, else white
+            text_color = (255, 255, 255) if hovering else (0, 0, 0)        # text changes too
+
+
+            # Draw the button with dynamic color
+            pygame.draw.rect(screen, button_color, againButton)
+
+            # Draw the text
+            again = mediumFont.render("Play Again", True, text_color)
             againRect = again.get_rect()
             againRect.center = againButton.center
-            pygame.draw.rect(screen, white, againButton)
             screen.blit(again, againRect)
+
             click, _, _ = pygame.mouse.get_pressed()
-            if click == 1:
+            if click == 1 and hovering:
                 mouse = pygame.mouse.get_pos()
                 if againButton.collidepoint(mouse):
                     time.sleep(0.2)
