@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Magic 8 Ball - Ask the universe for guidance with smooth animations and beautiful themes">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Magic 8 Ball - Ask and Discover</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%231a1a2e'/><circle cx='50' cy='50' r='45' fill='%23e94560'/><circle cx='50' cy='50' r='35' fill='%23000'/><text x='50' y='55' font-size='50' fill='%23e94560' text-anchor='middle' font-weight='bold'>8</text></svg>">
+</head>
+<body class="theme-classic">
+    <div class="page-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">✨ Magic 8 Ball ✨</h1>
+                <p class="subtitle">Ask the universe for guidance</p>
+            </div>
+            <div class="header-controls">
+                <button class="icon-btn" id="themeToggleBtn" title="Switch theme" aria-label="Change theme">
+                    <span class="theme-icon">🎨</span>
+                </button>
+                <button class="icon-btn" id="soundToggleBtn" title="Toggle sound" aria-label="Toggle sound effects">
+                    <span class="sound-icon">🔊</span>
+                </button>
+                <button class="icon-btn" id="historyBtn" title="View history" aria-label="View question history">
+                    <span>📋</span>
+                </button>
+                <button class="icon-btn" id="achievementsBtn" title="View achievements" aria-label="View achievements">
+                    <span>🏆</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="game-container">
+            <!-- Magic 8 Ball -->
+            <div class="magic-ball-wrapper">
+                <div class="magic-ball-container">
+                    <div class="magic-ball" id="magicBall">
+                        <div class="ball-outer">
+                            <div class="ball-inner">
+                                <div class="answer-window">
+                                    <div class="answer-text" id="answerText">Ask a question...</div>
+                                    <div class="answer-type" id="answerType"></div>
+                                </div>
+                            </div>
+                            <div class="ball-shine"></div>
+                        </div>
+                    </div>
+                    <div class="ball-reflection"></div>
+                </div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <label for="questionInput" class="input-label">What's your question?</label>
+                <input
+                    type="text"
+                    id="questionInput"
+                    class="question-input"
+                    placeholder="Ask me anything..."
+                    maxlength="500"
+                    aria-label="Ask the Magic 8 Ball a question"
+                >
+                <div class="input-controls">
+                    <select id="responsePack" class="response-pack-select" aria-label="Select response pack">
+                        <option value="default">Default Responses</option>
+                        <option value="funny">Funny Responses</option>
+                        <option value="serious">Serious Responses</option>
+                        <option value="motivational">Motivational Responses</option>
+                    </select>
+                </div>
+                <div class="char-count">
+                    <span id="charCount">0</span>/500
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button class="ask-btn" id="askBtn" aria-label="Ask the Magic 8 Ball">
+                    <span class="btn-text">Ask the Magic 8 Ball</span>
+                    <span class="btn-icon">🎱</span>
+                </button>
+                <button class="secondary-btn" id="clearBtn" aria-label="Clear question">Clear</button>
+                <button class="secondary-btn" id="shareBtn" aria-label="Share result">Share</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-section">
+                <div class="stat">
+                    <div class="stat-label">Total Questions</div>
+                    <div class="stat-value" id="totalQuestions">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Today's Streak 🔥</div>
+                    <div class="stat-value" id="streakCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Current Combo ✨</div>
+                    <div class="stat-value" id="comboCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Best Combo 🏆</div>
+                    <div class="stat-value" id="bestCombo">0</div>
+                </div>
+            </div>
+
+            <!-- Achievement Notification -->
+            <div class="achievement-toast" id="achievementToast" style="display: none;">
+                <div class="achievement-icon" id="achievementIcon"></div>
+                <div class="achievement-info">
+                    <div class="achievement-name" id="achievementName"></div>
+                    <div class="achievement-desc" id="achievementDesc"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Theme Selector Modal -->
+        <div class="modal" id="themeModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Select a Theme</h2>
+                    <button class="modal-close" id="closeThemeModal" aria-label="Close theme selector">&times;</button>
+                </div>
+                <div class="theme-grid" id="themeGrid">
+                    <!-- Themes will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- History Modal -->
+        <div class="modal" id="historyModal">
+            <div class="modal-content modal-content-large">
+                <div class="modal-header">
+                    <h2>Question History</h2>
+                    <button class="modal-close" id="closeHistoryModal" aria-label="Close history">&times;</button>
+                </div>
+                <div class="history-content">
+                    <div class="history-controls">
+                        <button class="btn-small" id="clearHistoryBtn">Clear History</button>
+                        <input type="text" id="historySearch" class="search-input" placeholder="Search history...">
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <p class="empty-message">No history yet. Ask a question to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Modal -->
+        <div class="modal" id="achievementsModal">
+            <div class="modal-content modal-content-large">
+                <div class="modal-header">
+                    <h2>Achievements</h2>
+                    <button class="modal-close" id="closeAchievementsModal" aria-label="Close achievements">&times;</button>
+                </div>
+                <div class="achievements-content">
+                    <div class="achievements-grid" id="achievementsGrid">
+                        <!-- Achievements will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Overlay -->
+        <div class="modal-overlay" id="modalOverlay"></div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Magic 8 Ball v1.0 • Built with ✨ magic ✨</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/api.js"></script>
+    <script src="/static/game.js"></script>
+    <script src="/static/ui.js"></script>
+</body>
+</html>
