@@ -16,7 +16,7 @@ def player(board):
     o_count = sum(row.count(O) for row in board)
     return O if x_count > o_count else X
 
-
+# Returns the list of empty positions on the board
 def actions(board):
     """Returns a list of all possible actions (i, j) available on the board."""
     return [(i, j) for i in range(3) for j in range(3) if board[i][j] is EMPTY]
@@ -116,10 +116,12 @@ def min_value(board):
 
 
 if __name__ == "__main__":
+    print("Welcome to Tic-Tac-Toe! This game will play itself using AI.")
     board = initial_state()
     while not terminal(board):
         move = minimax(board)
         board = result(board, move)
         print(f"Player {player(board)} made move: {move}")
         for row in board:
-            print(row)
+            print(" | ".join([cell if cell else " " for cell in row]))
+        print()
