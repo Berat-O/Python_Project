@@ -1,0 +1,87 @@
+##Randomization
+import random
+import esters_code
+
+print(esters_code.tom)
+
+random_number = random.randint(1,100)
+print(random_number)
+
+random_float = random.random() * 10
+print(random_float)
+
+love_score = random.randint(1, 100)
+print(f"Your love score is {love_score}")
+
+#Mini project
+#Create random sides of a coin: Heads or Tails
+test_seed = int(input("Create a seed number: "))
+random.seed(test_seed)
+#generate random integers btw 0 and 1
+random_side =random.randint(0,1)
+if random_side == 1:
+  print("Heads")
+else:
+  print("Tails")
+
+  ##Offset and Appending Items to List
+
+states_of_america = ["Delaware", "Pennsylvania", "New Jersey", "Georgia", "Connecticut", "Massachusetts", "Maryland", "South Carolina", "New Hampshire", "Virginia", "New York", "North Carolina", "Rhode Island", "Vermont", "Kentucky", "Tennessee", "Ohio", "Louisiana", "Indiana", "Mississippi", "Illinois", "Alabama", "Maine", "Missouri", "Arkansas", "Michigan", "Florida", "Texas", "Iowa", "Wisconsin", "California", "Minnesota", "Oregon", "Kansas", "West Virginia", "Nevada", "Nebraska", "Colorado", "North Dakota", "South Dakota", "Montana", "Washington", "Idaho", "Wyoming", "Utah", "Oklahoma", "New Mexico", "Arizona", "Alaska",]
+states_of_america.append("Esters Island")
+states_of_america[0]
+print(states_of_america[0])
+states_of_america[-2] = "Monkey Land"
+states_of_america.extend(["Cupy Date", "Detty December", "Monkey Land"])
+states_of_america.insert(12, "Iceland")
+states_of_america.remove("Iceland")
+states_of_america.pop()
+states_of_america.reverse()
+states_of_america.sort()
+print(states_of_america)
+
+my_country = states_of_america.copy()
+print(my_country)
+
+###Mini Project 2
+##Who is paying the bill? 
+#Get to randomly select a person to pay the bills from a list of names 
+
+import random
+
+name_csv = input("Give me everybody's names,separated by a comma.")
+names = name_csv.split(", ")
+num_names = len(names)
+random_num = random.randint(0, num_names - 1)
+name_chosen = names[random_num]
+print(f"{name_chosen} is going to pay for the meal, today.")
+
+#Or use the random.choice() function
+name_csv = input("Give me everybody's names,separated by a comma.")
+names = name_csv.split(", ")
+name_choice = random.choice(names)
+print(f"{name_choice} is going to pay for the meal, today.")
+
+#Nested lists
+box = []
+fruits = ["apple", "banana", "cherry", "strawberry", "mango", "grape", "orange", "melon", "kiwi", "pineapple"]
+vegetables = ["carrot", "cabbage", "lettuce", "spinach", "cucumber", "tomato", "onion", "potato", "pea", "broccoli"]
+box = [fruits, vegetables]
+print(box)
+
+#Mini Test
+#Position of treasure using two-digit numbers
+
+row1 = ["🟦", "🟦", "🟦"]
+row2 = ["🟦", "🟦", "🟦"]
+row3 = ["🟦", "🟦", "🟦"]
+map = [row1, row2, row3]
+print(f"{row1}\n{row2}\n{row3}")
+
+position = input("Where do you want to put your treasure?")
+row = int(position[0])
+column = int(position[1])
+selected_row = map[row - 1]
+selected_row[column - 1] = "X"
+#Or
+map[row - 1][column - 1] = "X"
+print(f"{row1}\n{row2}\n{row3}")
