@@ -36,10 +36,10 @@ class Main:
         # ---- Filename input ----
         filename = input("Enter the filename containing the list of stocks: ").strip()
 
-        if not filename:
-            print("Error: Filename cannot be empty.")
-            self.logger.error("Empty filename provided.")
-            return
+if not filename:
+    print("Invalid input: You must enter a filename containing the list of stocks.")
+    self.logger.error("Empty filename provided.")
+    return
 
         if "." in filename and not filename.endswith(".csv"):
             print("Error: Please provide a .csv file.")
@@ -52,7 +52,12 @@ class Main:
         path = os.path.join("data", filename)
 
         # ---- Sorting preference ----
-        sort_data = input("Sort data? (yes/no): ").strip().lower() == "yes"
+        sort_input = input("Sort data? (yes/no): ").strip().lower()
+if sort_input not in ["yes", "no"]:
+    print("Invalid input, defaulting to no sort.")
+    sort_data = False
+else:
+    sort_data = sort_input == "yes"
         successful_symbols = []
 
         try:
@@ -98,15 +103,23 @@ class Main:
             save_successful = input("Do you want to save successful symbols? (yes/no): ").strip().lower() == "yes"
 
             if successful_symbols and save_successful:
-                output_filename = input("Enter the filename to save successful symbols: ").strip()
+    output_filename = input("Enter the filename to save successful symbols: ").strip()
 
-                if not output_filename.endswith(".csv"):
-                    output_filename += ".csv"
-
-                self.data_processor.save_successful_symbols(
-                    output_filename,
-                    successful_symbols
-                )
+    if not output_filename:
+        print("No filename entered, skipping save.")
+        self.logger.warning("User did not provide a filename to save symbols.")
+    else:
+        if not output_filename.endswith(".csv"):
+            output_filename += ".csv"
+        try:
+            self.data_processor.save_successful_symbols(
+                output_filename,
+                successful_symbols
+            )
+            print(f"Successfully saved symbols to {output_filename}")
+        except Exception as e:
+            print(f"Could not save symbols: {e}")
+            self.logger.error(f"Error saving symbols: {e}")
 
         self.logger.info("Session stopped")
 
