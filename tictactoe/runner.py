@@ -2,7 +2,7 @@ import pygame
 import sys
 import time
 
-import tictactoe as ttt
+import game.tictactoe as ttt
 
 # Initialize pygame
 pygame.init()
@@ -13,6 +13,8 @@ size = width, height = 600, 400
 # Colors
 red = (255, 0, 0)
 blue = (0, 0, 255)
+black = (0, 0, 0)
+white = (255, 255, 255)
 
 # Create the game window
 screen = pygame.display.set_mode(size)
@@ -42,7 +44,7 @@ while True:
         # Draw title
         title = largeFont.render("Play Tic-Tac-Toe", True, white)
         titleRect = title.get_rect()
-        titleRect.center = ((width / 2), 50)
+        titleRect.center = (int(width / 2), 50)
         screen.blit(title, titleRect)
 
         # Draw "Play as X" button
