@@ -107,12 +107,16 @@ def max_value(board):
 
 def min_value(board):
     """Returns the minimum value (for O) of a move."""
-    if terminal(board):
-        return utility(board)
-    value = float('inf')
-    for action in actions(board):
-        value = min(value, max_value(result(board, action)))
-    return value
+    try:
+        if terminal(board):
+            return utility(board)
+        value = float('inf')
+        for action in actions(board):
+            value = min(value, max_value(result(board, action)))
+        return value
+    except Exception as e:
+        print(f"Exception: {e}")
+        return None
 
 
 if __name__ == "__main__":
