@@ -63,7 +63,9 @@ class Main:
                 self.logger.info("No stocks loaded.")
                 return
 
-            with Pool() as pool:
+            # Limit the number of Pool() to reduce memory consumption.
+            # This is to avoid running out of PC memory (or virtual memory) when executing parallel processing.
+            with Pool(processes=2) as pool:
                 data = pool.map(self.stock_fetcher.fetch_stock_data, stocks)
 
             data = [stock_info for stock_info in data if stock_info is not None]
@@ -73,9 +75,10 @@ class Main:
                 self.logger.warning("No valid stock data was fetched.")
                 return
 
-            successful_symbols = [stock_info["symbol"] for stock_info in data]
-
+            successful_symbols = data  # Keep all data
+            
             df = self.data_processor.display_data(data, sort=sort_data)
+            
             self.stock_plotter.plot_data(
                 df,
                 save_figure=True,

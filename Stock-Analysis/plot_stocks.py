@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import logging
 import datetime
+import os
 
 class StockPlotter:
 
@@ -23,8 +24,13 @@ class StockPlotter:
         plt.xticks(rotation=45, ha='right', fontsize=font_size)
         plt.tight_layout()
         if save_figure:
+            # Change to relative path and create the folder if it doesn't exist
+            results_dir = "results"
+            if not os.path.exists(results_dir):
+                os.makedirs(results_dir)
+
             current_time = datetime.datetime.now().strftime("%d-%m-%Y")
-            figure_filename = f"/workspaces/Python_Project/Stock-Analysis/results/plot_{current_time}.png"
+            figure_filename = f"results/plot_{current_time}.png"
             plt.savefig(figure_filename, dpi=dpi)  # Save the figure to a file with higher resolution
             logging.getLogger(__name__).info(f"Figure saved as {figure_filename}.")  # Log that the figure has been saved
         else:

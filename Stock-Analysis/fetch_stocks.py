@@ -17,10 +17,20 @@ class StockFetcher:
 
             # Check if recommendation data exists
             if 'recommendationMean' not in info:
-                raise KeyError("recommendationMean field missing in API response")
+                # log and return None instead of throwing an error
+                logging.getLogger(__name__).warning(f"No recommendation data for {stock}. Skipping.")
+                return None 
 
-            rate = info["recommendationMean"]
-            return (rate, stock)
+            # First find the analyst recommendation value (recommendationMean) 
+            # If not available, substitute current stock price (currentPrice)
+            rate = info.get("recommendationMean")
+            if rate is None:
+                # Obtain prices for Japanese stocks etc.
+                rate = info.get("currentPrice") or info.get("regularMarketPrice") or 0
+                logging.getLogger(__name__).debug(f"{stock}: Using price as fallback.")
+
+            # Unify the return value into a dictionary (for consistency with app.py)
+            return {"Rate": rate, "Symbol": stock}
 
         except ValueError as e:
             logging.getLogger(__name__).error(

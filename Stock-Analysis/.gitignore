@@ -1,2 +1,4 @@
 .stonks/
 myapp.log
+.venv
+__pycache__

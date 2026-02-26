@@ -23,16 +23,20 @@ This Python script empowers you to effortlessly analyze and visualize stock rati
 
 ## Prerequisites
 - Python 3.x
-- Required Python packages: `requests`, `csv`, `yfinance`, `pandas`, `matplotlib`
+- Required Python packages: `requests`, `csv`, `yfinance`, `pandas`, `matplotlib`,`xlrd`,`openpyxl`
 - Internet connection to fetch stock data from Yahoo Finance
 
 ## Usage
 1. **Install Dependencies**: Ensure that all required Python packages are installed. You can install them via pip:
    ```
-   pip install requests yfinance pandas matplotlib
+   pip install requests yfinance pandas matplotlib xlrd openpyxl
+   ```
+or 
+   ```
+   pip install -r requirements.txt
    ```
 2. **Prepare Stock List**: Create a CSV file containing a list of stock symbols, with one symbol per line.
-3. **Run the Script**: Execute the script `main.py`. You'll be prompted to enter the filename of the CSV containing stock symbols and whether to sort the data.
+3. **Run the Script**: Execute the script `app.py`. You'll be prompted to enter the filename of the CSV containing stock symbols and whether to sort the data. The recommended file name is "topix_core30".
 4. **View Data**: After execution, the script will display the fetched stock data. If opted, it will also generate a bar plot for visualization.
 5. **Save Successful Symbols**: Optionally, you can choose to save the symbols for which data was successfully fetched into another CSV file.
 
