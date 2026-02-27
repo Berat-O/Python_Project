@@ -1,6 +1,7 @@
 import random
 
 def roll():
+    """Return a random integer between 1 and 6 (simulating a die)."""
     return random.randint(1, 6)  # standard die
 
 print("\n_______WELCOME TO PIG______\n")
@@ -9,12 +10,12 @@ print("\n_______WELCOME TO PIG______\n")
 while True:
     min_players = int(input("Minimum Players : "))
     max_players = int(input("Maximum Players : "))
-    players = input(f"Enter total number of players ({max_players} max): ")
-    if players.isdigit():
-        players = int(players)
-        if min_players <= players <= max_players:
+    total_players_input = input(f"Enter total number of players ({max_players} max): ")
+    if total_players_input.isdigit():
+        total_players = int(total_players_input)
+        if min_players <= total_players <= max_players:
             break
-        elif players < min_players:
+        elif total_players < min_players:
             print(f"Minimum {min_players} players allowed")
         else:
             print(f"Only {min_players} - {max_players} allowed")
@@ -23,37 +24,37 @@ while True:
 
 # Game setup
 winning_score = 100
-player_scores = [0 for _ in range(players)]
-print(f"\nGame started with {players} players. First to {winning_score} wins!\n")
+player_scores = [0 for _ in range(total_players)]
+print(f"\nGame started with {total_players} players. First to {winning_score} wins!\n")
 
 # Main game loop
 winner = None
-while not winner:
-    for player_idx in range(players):
-        print(f"\nPlayer {player_idx + 1}'s turn")
-        curr_score = 0
+while winner is None:
+    for player_index in range(total_players):
+        print(f"\nPlayer {player_index + 1}'s turn")
+        current_score = 0
         while True:
-            player_roll = input("Roll the die? (y/n): ").lower()
-            if player_roll == 'y':
-                value = roll()
-                print(f"You rolled {value}")
-                if value == 1:
+            player_choice = input("Roll the die? (y/n): ").lower()
+            if player_choice == 'y':
+                dice_value = roll()
+                print(f"You rolled {dice_value}")
+                if dice_value == 1:
                     print("Oops! You rolled a 1. Turn over, no points this round.")
-                    curr_score = 0
+                    current_score = 0
                     break
                 else:
-                    curr_score += value
-                    print(f"Current turn score: {curr_score}")
-            elif player_roll == 'n':
+                    current_score += dice_value
+                    print(f"Current turn score: {current_score}")
+            elif player_choice == 'n':
                 print("Player chooses to hold. Turn over.")
                 break
             else:
                 print("Invalid input. Please enter 'y' or 'n'.")
-        player_scores[player_idx] += curr_score
-        print(f"Total score for Player {player_idx + 1}: {player_scores[player_idx]}")
+        player_scores[player_index] += current_score
+        print(f"Total score for Player {player_index + 1}: {player_scores[player_index]}")
 
-        if player_scores[player_idx] >= winning_score:
-            winner = player_idx
+        if player_scores[player_index] >= winning_score:
+            winner = player_index
             break
 
 # Announce winner
