@@ -11,48 +11,69 @@ PASSWORD_FILE = "password.csv"
 
 def main_menu():
     """Display the main menu and get the user's choice."""
-    menu = [
-        "---------------------|",
-        "Password Manager App |",
-        "---------------------|",
-        "1. Create password   |",
-        "2. Check password    |",
-        "3. Edit password     |",
-        "4. Delete password   |",
-        "5. Exit              |",
-        "---------------------|"
-    ]
-    print("\n".join(menu))
-    return input("Pick a number: ")
+    try:
+        menu = [
+            "---------------------|",
+            "Password Manager App |",
+            "---------------------|",
+            "1. Create password   |",
+            "2. Check password    |",
+            "3. Edit password     |",
+            "4. Delete password   |",
+            "5. Exit              |",
+            "---------------------|"
+        ]
+        print("\n".join(menu))
+        return input("Pick a number: ")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return
+
 
 def validate_aim(aim):
     """Validate if the aim is not empty."""
-    if not aim:
-        display_message("Aim unspecified or empty. Please specify an 'aim' value.", Fore.RED)
+    try:
+        if not aim:
+            display_message("Aim unspecified or empty. Please specify an 'aim' value.", Fore.RED)
+            return False
+        return True
+    except Exception as e:
+        print("Exception occured: ", e)
         return False
-    return True
 
 def read_csv_file():
     """Read the CSV file and return the data as a list of dictionaries."""
-    if not os.path.isfile(PASSWORD_FILE):
+    try:
+        if not os.path.isfile(PASSWORD_FILE):
+            return []
+        with open(PASSWORD_FILE, "r") as csvfile:
+            return list(csv.DictReader(csvfile))
+    except Exception as e:
+        print("Exception occured: ", e)
         return []
-    with open(PASSWORD_FILE, "r") as csvfile:
-        return list(csv.DictReader(csvfile))
 
 def write_csv_file(data):
     """Write the data to the CSV file."""
-    with open(PASSWORD_FILE, "w", newline="") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=["aim", "password"])
-        writer.writeheader()
-        writer.writerows(data)
+    try:
+        with open(PASSWORD_FILE, "w", newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=["aim", "password"])
+            writer.writeheader()
+            writer.writerows(data)
+    except Exception as e:
+        print("Exception occured: ", e)
+        return
 
 def password_generator():
     """Generate a random password with lowercase, uppercase, punctuation, and numeric characters."""
-    char_sets = [string.ascii_lowercase, string.ascii_uppercase, string.punctuation, string.digits]
-    password = [random.choice(char_set) for char_set in char_sets]
-    password.extend(random.choices("".join(char_sets), k=STRING_LENGTH + PUNCTUATION_LENGTH + 4 - len(char_sets)))
-    random.shuffle(password)
-    return "".join(password)
+    try:
+        char_sets = [string.ascii_lowercase, string.ascii_uppercase, string.punctuation, string.digits]
+        password = [random.choice(char_set) for char_set in char_sets]
+        password.extend(random.choices("".join(char_sets), k=STRING_LENGTH + PUNCTUATION_LENGTH + 4 - len(char_sets)))
+        random.shuffle(password)
+        return "".join(password)
+    except Exception as e:
+        print("An error occurred: ", e)
+
 
 def display_message(message, color=Fore.GREEN):
     """Display a message in the specified color."""
