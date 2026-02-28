@@ -60,4 +60,4 @@ try:
     plt.title("True values vs Predicted values")
     plt.show()
 except Exception as e:
-    printf("Exception occured!", e)
+    print("Exception occured!", e)
