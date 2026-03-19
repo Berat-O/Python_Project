@@ -25,16 +25,11 @@ def generate_qr_code(data: str) -> None:
     qr.add_data(data)
     qr.make(fit=True)
 
-    try:
-        from PIL import Image
-        img = qr.make_image(fill_color="black", back_color="white")
-        filename = "qrcode_output.png"
-        img.save(filename)
-        print(f"QR code saved as '{filename}'")
-    except ImportError:
-        print("Pillow not installed. Showing QR code in terminal instead.")
-        print("Install Pillow to save as image: pip install Pillow\n")
-        qr.print_ascii(invert=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    filename = "qrcode_output.png"
+    img.save(filename)
+    print(f"QR code saved as '{filename}'")
+
 
 
 def main():
