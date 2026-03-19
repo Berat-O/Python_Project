@@ -27,3 +27,4 @@ tzdata==2024.2
 urllib3==2.2.3
 webencodings==0.5.1
 yfinance==0.2.50
+qrcode==8.0
