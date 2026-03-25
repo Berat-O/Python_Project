@@ -17,6 +17,11 @@ while attempts > 0:
         # Ask the user for their guess
         guess = int(input("Enter your guess: "))
 
+        # Ensure that guess is between 1-100
+        if guess < 1 or guess > 100:
+            print("Please enter a number between 1 and 100.\n")
+            continue
+
         # Check if the guess is correct
         if guess == secret_number:
             print("🎉 Congratulations! You guessed the number!")
