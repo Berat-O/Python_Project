@@ -1,0 +1,8 @@
+emoji
+wordcloud
+pandas
+numpy
+matplotlib
+Pillow
+nltk
+seaborn

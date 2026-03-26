@@ -22,6 +22,20 @@ This project performs sentiment analysis on WhatsApp chat data using Natural Lan
 1. Clone this repository
 2. Install required packages:
 
+```bash
+pip install -r requirements.txt
+
+
+👉 This makes your PR **10x stronger**
+
+---
+
+## 💾 Commit
+
+```bash
+git add .
+git commit -m "Added requirements.txt and updated README for setup instructions"
+
 
 ## Usage
 1. Export your WhatsApp chat as a .txt file (without media)
