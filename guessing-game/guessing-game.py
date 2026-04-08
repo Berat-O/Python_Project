@@ -2,38 +2,51 @@ import random
 
 # Introduction
 print("Welcome to the Guessing Game!")
-print("I'm thinking of a number between 1 and 100.")
-print("You have 7 attempts to guess it correctly.")
 
-# Generate a random number between 1 and 100
-secret_number = random.randint(1, 100)
+while True:
+    print("I'm thinking of a number between 1 and 100.")
+    print("You have 7 attempts to guess it correctly.")
 
-# Set the number of allowed attempts
-attempts = 7
+    # Generate a random number between 1 and 100
+    secret_number = random.randint(1, 100)
 
-# Game loop
-while attempts > 0:
-    try:
-        # Ask the user for their guess
-        guess = int(input("Enter your guess: "))
+    # Set the number of allowed attempts
+    attempts = 7
 
-        # Check if the guess is correct
-        if guess == secret_number:
-            print("🎉 Congratulations! You guessed the number!")
-            break
-        elif guess < secret_number:
-            print("Too low. Try a higher number.")
-        else:
-            print("Too high. Try a lower number.")
+    # Game loop
+    while attempts > 0:
+        try:
+            # Ask the user for their guess
+            guess = int(input("Enter your guess: "))
 
-        # Decrease remaining attempts
-        attempts -= 1
-        print(f"Attempts left: {attempts}\n")
+            # Ensure that guess is between 1-100
+            if guess < 1 or guess > 100:
+                print("Please enter a number between 1 and 100.\n")
+                continue
 
-    except ValueError:
-        # Handle non-integer input
-        print("Invalid input. Please enter a number.\n")
+            # Check if the guess is correct
+            if guess == secret_number:
+                print("🎉 Congratulations! You guessed the number!")
+                break
+            elif guess < secret_number:
+                print("Too low. Try a higher number.")
+            else:
+                print("Too high. Try a lower number.")
 
-# If no attempts are left
-if attempts == 0:
-    print(f"❌ Game over! The number was {secret_number}. Better luck next time.")
+            # Decrease remaining attempts
+            attempts -= 1
+            print(f"Attempts left: {attempts}\n")
+
+        except ValueError:
+            # Handle non-integer input
+            print("Invalid input. Please enter a number.\n")
+
+    # If no attempts are left
+    if attempts == 0:
+        print(f"❌ Game over! The number was {secret_number}. Better luck next time.")
+
+    # Play again option
+    play_again = input("Do you want to play again? (y/n): ").strip().lower()
+    if play_again != "y":
+        print("Thanks for playing!")
+        break
