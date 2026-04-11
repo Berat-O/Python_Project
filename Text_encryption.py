@@ -15,6 +15,9 @@ random.shuffle(key)
 #ENCRYPT
 
 plain_text = input("Enter a message to encrypt: ")
+if not plain_text.isalpha():
+    print("Error: Only alphabets are allowed!")
+    exit()
 cipher_text = ""
 
 for letter in plain_text:
@@ -26,6 +29,9 @@ print(f"encrypted message : {cipher_text}")
 
 #decrypt 
 cipher_text = input("Enter a message to decrypt: ")
+if not cipher_text.isalpha():
+    print("Error: Only alphabets are allowed!")
+    exit()
 plain_text = ""
 
 for letter in cipher_text:
