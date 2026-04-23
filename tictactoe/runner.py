@@ -13,6 +13,8 @@ size = width, height = 600, 400
 # Colors
 red = (255, 0, 0)
 blue = (0, 0, 255)
+black = (0, 0, 0)
+white = (255, 255, 255)
 
 # Create the game window
 screen = pygame.display.set_mode(size)
