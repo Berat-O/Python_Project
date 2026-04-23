@@ -1,39 +1,38 @@
 import random
 
-# Introduction
 print("Welcome to the Guessing Game!")
 print("I'm thinking of a number between 1 and 100.")
-print("You have 7 attempts to guess it correctly.")
+print("You have 7 attempts to guess it correctly.\n")
 
-# Generate a random number between 1 and 100
 secret_number = random.randint(1, 100)
-
-# Set the number of allowed attempts
 attempts = 7
 
-# Game loop
 while attempts > 0:
-    try:
-        # Ask the user for their guess
-        guess = int(input("Enter your guess: "))
+    user_input = input("Enter your guess (1-100): ")
 
-        # Check if the guess is correct
-        if guess == secret_number:
-            print("🎉 Congratulations! You guessed the number!")
-            break
-        elif guess < secret_number:
-            print("Too low. Try a higher number.")
-        else:
-            print("Too high. Try a lower number.")
+    # Check if input is a number
+    if not user_input.isdigit():
+        print("❌ Please enter a valid number.\n")
+        continue
 
-        # Decrease remaining attempts
-        attempts -= 1
-        print(f"Attempts left: {attempts}\n")
+    guess = int(user_input)
 
-    except ValueError:
-        # Handle non-integer input
-        print("Invalid input. Please enter a number.\n")
+    # Check range
+    if guess < 1 or guess > 100:
+        print("❌ Number must be between 1 and 100.\n")
+        continue
 
-# If no attempts are left
+    # Game logic
+    if guess == secret_number:
+        print("🎉 Congratulations! You guessed the number!")
+        break
+    elif guess < secret_number:
+        print("Too low.")
+    else:
+        print("Too high.")
+
+    attempts -= 1
+    print(f"Attempts left: {attempts}\n")
+
 if attempts == 0:
-    print(f"❌ Game over! The number was {secret_number}. Better luck next time.")
+    print(f"❌ Game over! The number was {secret_number}.")
