@@ -1,9 +1,6 @@
 import random
 
-# Introduction
-print("Welcome to the Guessing Game!")
-
-while True:
+def play_game():
     print("I'm thinking of a number between 1 and 100.")
     print("You have 7 attempts to guess it correctly.")
 
@@ -27,7 +24,7 @@ while True:
             # Check if the guess is correct
             if guess == secret_number:
                 print("🎉 Congratulations! You guessed the number!")
-                break
+                return
             elif guess < secret_number:
                 print("Too low. Try a higher number.")
             else:
@@ -45,8 +42,21 @@ while True:
     if attempts == 0:
         print(f"❌ Game over! The number was {secret_number}. Better luck next time.")
 
+def ask_to_play_again():
     # Play again option
     play_again = input("Do you want to play again? (y/n): ").strip().lower()
-    if play_again != "y":
-        print("Thanks for playing!")
-        break
+    return play_again == "y"
+
+def main():
+    # Introduction
+    print("Welcome to the Guessing Game!")
+
+    while True:
+        play_game()
+        if not ask_to_play_again():
+            print("Thanks for playing!")
+            break
+
+
+
+main()
