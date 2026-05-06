@@ -6,46 +6,43 @@ class StockFetcher:
 
     @staticmethod
     def fetch_stock_data(stock):
-        """Fetch stock data from Yahoo Finance with improved error handling."""
+        """Fetch stock data with improved validation and user-friendly error handling."""
         try:
+            # ✅ Input validation
+            if not stock or not isinstance(stock, str):
+                raise ValueError("Stock symbol must be a non-empty string")
+
+            stock = stock.strip().upper()
+
             ticker = yf.Ticker(stock)
             info = ticker.info
 
-            # Check if info returned anything
+            # ✅ Check empty response
             if not info:
-                raise ValueError("Empty response received from Yahoo Finance API")
+                raise ValueError("No data received. Please check the stock symbol.")
 
-            # Check if recommendation data exists
+            # ✅ Check required field
             if 'recommendationMean' not in info:
-                raise KeyError("recommendationMean field missing in API response")
+                raise KeyError("Recommendation data not available for this stock.")
 
             rate = info["recommendationMean"]
             return (rate, stock)
 
         except ValueError as e:
-            logging.getLogger(__name__).error(
-                f"[ValueError] Unable to fetch data for '{stock}': {e}. "
-                f"Possible causes: Invalid stock symbol or empty API response."
-            )
+            print(f"❌ Input Error: {e}")
+            logging.error(f"[ValueError] {e}")
 
         except KeyError as e:
-            logging.getLogger(__name__).error(
-                f"[KeyError] Missing expected data for '{stock}': {e}. "
-                f"The API might have changed or the stock does not provide recommendation data.",
-                exc_info=True
-            )
+            print(f"❌ Data Error: {e}")
+            logging.error(f"[KeyError] {e}", exc_info=True)
 
-        except URLError as e:
-            logging.getLogger(__name__).error(
-                f"[URLError] Network issue while fetching '{stock}': {e}. "
-                f"Please check your internet connection or try again later."
-            )
+        except URLError:
+            print("❌ Network Error: Please check your internet connection.")
+            logging.error("[URLError] Network issue", exc_info=True)
 
         except Exception as e:
-            logging.getLogger(__name__).error(
-                f"[Unexpected Error] Failed to fetch '{stock}': ({type(e).__name__}) {e}",
-                exc_info=True
-            )
+            print(f"❌ Unexpected Error: {type(e).__name__} - {e}")
+            logging.error(f"[Unexpected Error] {e}", exc_info=True)
 
+        # ✅ Always return None on failure
         return None
-
