@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from sympy import sympify, symbols
+from sympy.utilities.lambdify import lambdify
+from sympy.core.sympify import SympifyError
 
 
 xmin = -100
@@ -13,12 +16,15 @@ x = np.linspace(xmin, xmax, points)
 while True:
     eq = input("Enter the equation for y in terms of x: ")
 
-    # Use eval() to evaluate the user's input as a mathematical expression
     try:
-        y = eval(eq)  # Evaluate the expression with x as a variable
+        # Parse the expression safely using sympy and convert to a numpy-callable function
+        x_sym = symbols('x')
+        expr = sympify(eq)
+        func = lambdify(x_sym, expr, modules=['numpy'])
+        y = func(x)
         break
-    except:
-        print("Invalid input equation.")
+    except (SympifyError, TypeError, NameError, ValueError) as e:
+        print(f"Invalid input equation: {e}")
 
 
 fig, ax = plt.subplots()
