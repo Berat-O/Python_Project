@@ -52,7 +52,14 @@ class Main:
         path = os.path.join("data", filename)
 
         # ---- Sorting preference ----
-        sort_data = input("Sort data? (yes/no): ").strip().lower() == "yes"
+        sort_choice = input("Sort data? (yes/no): ").strip().lower()
+
+        if sort_choice not in ["yes", "no"]:
+            print("Error: Please enter only 'yes' or 'no'.")
+            self.logger.error(f"Invalid sort choice: {sort_choice}")
+            return
+
+        sort_data = sort_choice == "yes"
         successful_symbols = []
 
         try:
@@ -95,10 +102,22 @@ class Main:
             self.logger.error("Unexpected error", exc_info=True)
 
         finally:
-            save_successful = input("Do you want to save successful symbols? (yes/no): ").strip().lower() == "yes"
+            save_choice = input("Do you want to save successful symbols? (yes/no): ").strip().lower()
+
+            if save_choice not in ["yes", "no"]:
+                print("Error: Please enter only 'yes' or 'no'.")
+                self.logger.error(f"Invalid save choice: {save_choice}")
+                return
+
+            save_successful = save_choice == "yes"
 
             if successful_symbols and save_successful:
                 output_filename = input("Enter the filename to save successful symbols: ").strip()
+
+                if not output_filename:
+                    print("Error: Output filename cannot be empty.")
+                    self.logger.error("Empty output filename.")
+                    return
 
                 if not output_filename.endswith(".csv"):
                     output_filename += ".csv"
