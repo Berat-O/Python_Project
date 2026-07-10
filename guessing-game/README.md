@@ -78,3 +78,5 @@ Feel free to improve it or suggest enhancements!
 
 ## 📄 License
 This project is licensed under the MIT License.
+
+### Requirements
