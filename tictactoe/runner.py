@@ -11,6 +11,9 @@ size = width, height = 600, 400
 
 
 # Colors
+# Colors
+black = (0, 0, 0)
+white = (255, 255, 255)
 red = (255, 0, 0)
 blue = (0, 0, 255)
 
