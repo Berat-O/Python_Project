@@ -13,6 +13,8 @@ size = width, height = 600, 400
 # Colors
 red = (255, 0, 0)
 blue = (0, 0, 255)
+black = (0, 0, 0)
+white = (255, 255, 255)
 
 # Create the game window
 screen = pygame.display.set_mode(size)
@@ -42,7 +44,7 @@ while True:
         # Draw title
         title = largeFont.render("Play Tic-Tac-Toe", True, white)
         titleRect = title.get_rect()
-        titleRect.center = ((width / 2), 50)
+        titleRect.center = ((width // 2), 50)
         screen.blit(title, titleRect)
 
         # Draw "Play as X" button
@@ -52,7 +54,7 @@ while True:
         playXRect.center = playXButton.center
         pygame.draw.rect(screen, white, playXButton)
         screen.blit(playX, playXRect)
-        
+
         # Draw "Play as O" button
         playOButton = pygame.Rect(5 * (width / 8), (height / 2), width / 4, 50)
         playO = mediumFont.render("Play as O", True, black)
@@ -113,7 +115,7 @@ while True:
             title = f"Computer thinking..."
         title = largeFont.render(title, True, white)
         titleRect = title.get_rect()
-        titleRect.center = ((width / 2), 30)
+        titleRect.center = ((width // 2), 30)
         screen.blit(title, titleRect)
 
         # Check for AI move
